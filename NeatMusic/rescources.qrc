@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Resources/btnfriends.png</file>
+        <file>Resources/btnmusic2.png</file>
+        <file>Resources/btnmv.png</file>
+        <file>Resources/btnradio2.png</file>
+        <file>Resources/btnSearch1.png</file>
+        <file>Resources/indicatormenu2.png</file>
+        <file>Resources/person.png</file>
+        <file>Resources/zhuanji.jpg</file>
+        <file>Resources/btnlist.png</file>
+        <file>Resources/btnListcircle1.png</file>
+        <file>Resources/btnListrandom1.png</file>
+        <file>Resources/btnListscirclesingle1.png</file>
+        <file>Resources/btnLrc1.png</file>
+        <file>Resources/btnNext1.png</file>
+        <file>Resources/btnPause1.png</file>
+        <file>Resources/btnPlay1.png</file>
+        <file>Resources/btnPrevious1.png</file>
+        <file>Resources/listcircle.png</file>
+        <file>Resources/listrandom.png</file>
+        <file>Resources/listsequence.png</file>
+        <file>Resources/listsingle.png</file>
+        <file>Resources/menuLrc.png</file>
+        <file>Resources/menuVol.png</file>
+    </qresource>
+</RCC>
