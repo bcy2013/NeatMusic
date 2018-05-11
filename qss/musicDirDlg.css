@@ -1,0 +1,40 @@
+﻿QFrame{
+    background-color:#ffffff;
+}
+QLabel{
+    font: 14pt "Microsoft YaHei UI";
+}
+QPushButton#btn_OK{
+    color:#ffffff;
+    background-color:#bc2f2d;
+    font: 10pt "Microsoft YaHei UI";
+    border:none;
+}
+QPushButton#btn_OK:hover{
+    background-color:#c85856;
+}
+QPushButton#btn_OK:pressed{
+    border-color:#c85856;
+    margin:1px 2px 1px 2px;
+    font:9pt;
+}
+QPushButton#btn_ADD{
+    color:#bc2f2d;
+    background-color:#ffffff;
+    font: 10pt "Microsoft YaHei UI";
+    border:1px solid #bc2f2d;
+}
+QPushButton#btn_ADD:hover{
+    color: #de9999;
+    border-color:#de9999;
+}
+QPushButton#btn_ADD:pressed{
+    color: #de9999;
+    border-color:#de9999;
+    margin:1px 2px 1px 2px;
+    font:9pt;
+}
+QPushButton#closeBtn{
+    background-color:#ffffff;
+    border:none;
+}
