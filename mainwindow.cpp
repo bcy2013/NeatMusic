@@ -119,7 +119,7 @@ void MainWindow::setupSignalsSlots()
         if(ui->tBtn_PlayShow->isChecked()==true)
            {
             m_pPlayMusicShow=new PlayMusicShow(this);
-            m_pPlayMusicShow->resize(this->geometry().width(),this->geometry().height()-60);
+            //m_pPlayMusicShow->resize(this->geometry().width(),this->geometry().height()-60);
             // m_pPlayMusicShow->setFixedSize(0,0);
             m_pPlayMusicShow->toMax();
         }

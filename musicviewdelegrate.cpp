@@ -40,6 +40,7 @@ void MusicViewDelegrate::setHoverIndex(const QModelIndex &currentHoverIndex)
 
 void MusicViewDelegrate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(index)
     if((option.state&QStyle::State_Selected)==QStyle::State_Selected)
     {
         QRect rect=option.rect;

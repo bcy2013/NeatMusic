@@ -36,7 +36,9 @@ SOURCES += \
     musicinfoview.cpp \
     musicdirdlg.cpp \
     toast.cpp \
-    playmusicshow.cpp
+    playmusicshow.cpp \
+    albumshow.cpp \
+    bar.cpp
 HEADERS += \
         mainwindow.h \
     musicview.h \
@@ -49,11 +51,13 @@ HEADERS += \
     musicinfoview.h \
     musicdirdlg.h \
     toast.h \
-    playmusicshow.h
+    playmusicshow.h \
+    filter.h \
+    albumshow.h \
+    bar.h
 FORMS += \
         mainwindow.ui \
-    musicdirdlg.ui \
-    playmusicshow.ui
+    musicdirdlg.ui
 
 RESOURCES += \
     rescources.qrc \

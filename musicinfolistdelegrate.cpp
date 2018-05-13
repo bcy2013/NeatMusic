@@ -65,7 +65,7 @@ void MusicInfoListDelegrate::paintBackground(QPainter *painter, const QStyleOpti
 void MusicInfoListDelegrate::paintLabels(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     double rowPosX = option.rect.x();
-    double rowPosY = option.rect.y();
+    //double rowPosY = option.rect.y();
     double rowWidth = option.rect.width();
     double rowHeight=option.rect.height();
     int fontMetricsWidthOffSet=30;

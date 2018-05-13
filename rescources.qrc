@@ -24,6 +24,14 @@
         <file>Resources/menuLrc.png</file>
         <file>Resources/menuVol.png</file>
         <file>Resources/btnClose1.png</file>
-        <file>Resources/4.mp3</file>
+        <file>Resources/bar.png</file>
+        <file>Resources/barbackground.png</file>
+        <file>Resources/tezt.jpg</file>
+        <file>Resources/1.jpg</file>
+        <file>Resources/zhuanjismall.jpg</file>
+        <file>Resources/Cover_01.jpg</file>
+        <file>Resources/109951163087237160.jpg</file>
+        <file>Resources/barbackgroundMask.png</file>
+        <file>Resources/barbackgroundr.png</file>
     </qresource>
 </RCC>

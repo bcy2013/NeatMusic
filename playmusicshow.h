@@ -3,11 +3,10 @@
 
 #include <QWidget>
 #include<QPropertyAnimation>
-namespace Ui {
-class PlayMusicShow;
-}
-
-class PlayMusicShow : public QWidget
+#include<QGraphicsScene>
+#include<QGraphicsView>
+#include<QHBoxLayout>
+class PlayMusicShow : public QGraphicsView
 {
     Q_OBJECT
 
@@ -16,10 +15,16 @@ public:
     ~PlayMusicShow();
     void toMax();
     void toMin();
-
+    void initBackground();
+    void initScene();
 
 private:
-    Ui::PlayMusicShow *ui;
+    QGraphicsScene *m_pGraScene;
+    QHBoxLayout *m_pHLayout;
+    QImage gauss;
+
+protected:
+    void drawBackground(QPainter *painter, const QRectF &rect) Q_DECL_OVERRIDE;
 };
 
 #endif // PLAYMUSICSHOW_H
