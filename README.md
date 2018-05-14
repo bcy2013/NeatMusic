@@ -4,7 +4,7 @@ NeatMusi
 
 更新计划
 =
-ffmpeg解码与数据库的添加，播放列表的显示（~5月30）
+ffmpeg解码与数据库的添加，播放列表的显示，中文歌曲分类支持（~5月30）
 预览图
 ==
 ![Image text](https://github.com/bcy2013/NeatMusic/blob/master/Resources/music.PNG)
