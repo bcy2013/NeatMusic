@@ -72,11 +72,11 @@ void PlayMusicShow::toMin()
         hide();
     });
 }
-
+#include<QDir>
 void PlayMusicShow::initBackground()
 {
     QImage  backgroundImg;
-    backgroundImg.load(":/Resources/zhuanjismall.jpg");
+    backgroundImg.load(QDir::currentPath()+"//cover.jpg");
     gauss=GaussFilter(backgroundImg, 100);
 }
 

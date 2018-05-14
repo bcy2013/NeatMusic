@@ -443,7 +443,7 @@ MusicInfoData *MainWindow::analyzeMusicInfo_ffmpeg(const char *path)
                     AVPacket pkt = fmt_ctx->streams[i]->attached_pic;
                     //使用QImage读取完整图片数据（注意，图片数据是为解析的文件数据，需要用QImage::fromdata来解析读取）
                     albumImg = QImage::fromData((uchar*)pkt.data, pkt.size);
-                    QString path= QDir::currentPath()+"cover.jpg";
+                    QString path= QDir::currentPath()+"//cover.jpg";
                     albumImg.save(path);
                     ui->tBtn_PlayShow->setIcon(QIcon(QPixmap::fromImage(albumImg)));
                     break;

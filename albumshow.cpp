@@ -10,7 +10,7 @@ AlbumShow::AlbumShow(QObject *parent) : QObject(parent)
     QPixmap temp;
     temp.load(":/Resources/barbackground.png");
     albumBackGround=temp.scaled(320,320,Qt::KeepAspectRatio);
-    QString path= QDir::currentPath()+"cover.jpg";
+    QString path= QDir::currentPath()+"//cover.jpg";
     temp.load(path);
     albumPicture=temp.scaled(220,220,Qt::KeepAspectRatio);
     angle=0.0;
