@@ -9,6 +9,7 @@
 #include"musicdirdlg.h"
 #include"playmusicshow.h"
 #include<QStringList>
+#include<QMediaPlaylist>
 #include<QMediaPlayer>
 #include<QSet>
 class MusicInfoData;
@@ -26,13 +27,19 @@ public:
     void setModelView();
     void setupSignalsSlots();
     void setupMainWindow();
+    void initMusicPlayControl();
 
     void getAllMusics(const QString& path);
     QString getTags(const char *path);
     QString getTags_2(const char *path);
     MusicInfoData * analyzeMusicInfo(const char *path);
+    MusicInfoData * analyzeMusicInfo_ffmpeg(const char *path);
+
 private slots:
     void openMusicDirDlg();
+    void seek(int second);
+    void updateTitle();
+    void statusChanged(QMediaPlayer::MediaStatus status);
 signals:
 
 private:
@@ -42,7 +49,12 @@ private:
     PlayMusicShow *m_pPlayMusicShow;
     QSettings *m_pSettings;
     QSet<QString> musicPathList;
-    QMediaPlayer *musicPlayer;
+    QMediaPlaylist *m_pMediaPlayList;
+    QMediaPlayer *musicPlayer=NULL;
+    qint64 m_Duration;
+    int m_dPlayListPlayMode;
+    bool m_bIsAddLikeList;
+    QImage albumImg;
 };
 
 #endif // MAINWINDOW_H

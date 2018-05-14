@@ -5,7 +5,7 @@
 #-------------------------------------------------
 CONFIG +=  c++11
 QT       += core gui
-QT += multimedia multimediawidgets
+QT += multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = NeatMusic
@@ -63,11 +63,10 @@ RESOURCES += \
     rescources.qrc \
     fonts.qrc \
     stylesheets.qrc
-
-
 win32: LIBS += -L$$PWD/taglib/lib/ -ltag -ltag_c
 INCLUDEPATH += $$PWD/taglib/include/taglib
 DEPENDPATH += $$PWD/taglib/include/taglib
-
-
-
+win32: LIBS += -LE:/ffmpeg/lib/
+LIBS +=-lavcodec -lavformat -lswscale -lavutil
+INCLUDEPATH += E:/ffmpeg/include
+DEPENDPATH += E:/ffmpeg/include

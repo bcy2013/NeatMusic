@@ -92,8 +92,6 @@ void PlayMusicShow::initScene()
     m_pGraScene->addItem(albumShowItem);
     m_pGraScene->addItem(bar);
     QRect rect=this->geometry();
-    int setX=-rect.width()/2;
-    int setY=-rect.height()/2;
     m_pGraScene->setSceneRect(-200,-400,200,200);
     this->setScene(m_pGraScene);
     setAlignment(Qt::AlignLeft | Qt::AlignTop);

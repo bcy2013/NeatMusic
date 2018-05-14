@@ -10,7 +10,7 @@ public:
     explicit AlbumShow(QObject *parent = nullptr);
 
 signals:
-
+    void albumImgChanged();
 public slots:
 
     // QGraphicsItem interface

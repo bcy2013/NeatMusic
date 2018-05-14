@@ -4,12 +4,14 @@
 #include<QGraphicsItemAnimation>
 #include<QTimeLine>
 #include<QGraphicsScene>
+#include<QDir>
 AlbumShow::AlbumShow(QObject *parent) : QObject(parent)
 {
     QPixmap temp;
     temp.load(":/Resources/barbackground.png");
     albumBackGround=temp.scaled(320,320,Qt::KeepAspectRatio);
-    temp.load(":/Resources/zhuanji.jpg");
+    QString path= QDir::currentPath()+"cover.jpg";
+    temp.load(path);
     albumPicture=temp.scaled(220,220,Qt::KeepAspectRatio);
     angle=0.0;
     this->startTimer(20);

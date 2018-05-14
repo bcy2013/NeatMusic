@@ -10,13 +10,16 @@
 #include"musiclistmodel.h"
 #include"toast.h"
 #include"playmusicshow.h"
+#include"albumshow.h"
 
 #include<QUrl>
 #include<QFileInfo>
 #include<QDir>
 #include<QStringList>
-#include <QMediaPlayer>
-#include<QVideoWidget>
+#include<QMediaMetaData>
+#include<QMediaPlayer>
+#include<QMediaPlaylist>
+
 
 #include <tag.h>
 #include <fileref.h>
@@ -24,11 +27,22 @@
 #include <tag_c.h>
 #include<iostream>
 using namespace std;
+
+extern "C"
+{
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libswscale/swscale.h"
+#include "libavdevice/avdevice.h"
+#include <libavutil/dict.h>
+}
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_MusicView(Q_NULLPTR),
-    m_MusicInfoView(Q_NULLPTR)
+    m_MusicInfoView(Q_NULLPTR),
+   m_dPlayListPlayMode(3),
+   m_bIsAddLikeList(false)
 {
     ui->setupUi(this);
     setupMainWindow();
@@ -93,6 +107,8 @@ void MainWindow::setModelView()
     m_MusicInfoView->setModel(musicListModel->mapToListViewDelegrate(musicListModel));
     QString strMusicCount=QString("%1%2").arg(QStringLiteral("歌曲")).arg(musicPathList.count());
     ui->tabWidget->setTabText(0,strMusicCount);
+
+    initMusicPlayControl();
 }
 
 void MainWindow::setupSignalsSlots()
@@ -102,15 +118,47 @@ void MainWindow::setupSignalsSlots()
         Toast *playModel=new Toast(this);
         playModel->resize(180,50);
         playModel->setPicture(false);
-        playModel->setText(QStringLiteral("单曲循环"));
+        m_dPlayListPlayMode+=1;
+        m_pMediaPlayList->setPlaybackMode(QMediaPlaylist::PlaybackMode(m_dPlayListPlayMode));
+        switch(m_dPlayListPlayMode%5){
+        case 0:
+             playModel->setText(QStringLiteral("单曲播放"));
+             ui->tBtn_PlayModel->setIcon(QIcon(":/Resources/player-icons_32px_1137006_easyicon.net.png"));
+             break;
+        case 1:
+             playModel->setText(QStringLiteral("单曲循环"));
+             ui->tBtn_PlayModel->setIcon(QIcon(":/Resources/listsingle.png"));
+            break;
+        case 2:
+             playModel->setText(QStringLiteral("顺序播放"));
+              ui->tBtn_PlayModel->setIcon(QIcon(":/Resources/listsequence.png"));
+            break;
+        case 3:
+             playModel->setText(QStringLiteral("列表循环"));
+             ui->tBtn_PlayModel->setIcon(QIcon(":/Resources/listcircle.png"));
+            break;
+        case 4:
+             playModel->setText(QStringLiteral("随机播放"));
+              ui->tBtn_PlayModel->setIcon(QIcon(":/Resources/listrandom.png"));
+            break;
+        }
         playModel->pop();
         playModel->move(this->x()+(this->width()-playModel->width())/2,this->y()+(this->height()-playModel->height())/2);
     });
     connect(ui->tBtn_Love,&QToolButton::clicked,[this](){
         Toast *addLoveList=new Toast(this);
-        addLoveList->resize(270,170);
-        addLoveList->setPicture(true);
-        addLoveList->setText(QStringLiteral("已添加到喜欢列表"));
+        m_bIsAddLikeList=!m_bIsAddLikeList;
+        if(m_bIsAddLikeList){
+            addLoveList->resize(270,170);
+            addLoveList->setPicture(true);
+            addLoveList->setText(QStringLiteral("已添加到喜欢列表"));
+            ui->tBtn_Love->setIcon(QIcon(":/Resources/like_32px_1101682_easyicon.net.png"));
+        }else{
+            addLoveList->resize(180,50);
+            addLoveList->setPicture(false);
+            addLoveList->setText(QStringLiteral("以从喜欢列表中移除"));
+             ui->tBtn_Love->setIcon(QIcon(":/Resources/like_outline_32px_1170275_easyicon.net.png"));
+        }
         addLoveList->pop();
         addLoveList->move(this->x()+(this->width()-addLoveList->width())/2,this->y()+(this->height()-addLoveList->height())/2);
     });
@@ -120,7 +168,6 @@ void MainWindow::setupSignalsSlots()
            {
             m_pPlayMusicShow=new PlayMusicShow(this);
             //m_pPlayMusicShow->resize(this->geometry().width(),this->geometry().height()-60);
-            // m_pPlayMusicShow->setFixedSize(0,0);
             m_pPlayMusicShow->toMax();
         }
         if(ui->tBtn_PlayShow->isChecked()==false)
@@ -134,6 +181,108 @@ void MainWindow::setupMainWindow()
 {
 
     ui->tBtn_PlayShow->setCheckable(true);
+    musicPlayer=new QMediaPlayer(this);
+
+    musicPlayer->setAudioRole(QAudio::MusicRole);
+    m_pMediaPlayList=new QMediaPlaylist;
+
+    m_pMediaPlayList->setPlaybackMode(QMediaPlaylist::PlaybackMode(m_dPlayListPlayMode));
+    m_pMediaPlayList->setCurrentIndex(0);
+    musicPlayer->setPlaylist(m_pMediaPlayList);
+    //m_pVideoWidget = new QVideoWidget(this);
+    //musicPlayer->setVideoOutput(m_pVideoWidget);
+}
+static bool isPlaylist(const QUrl &url) // Check for ".m3u" playlists.
+{
+    if (!url.isLocalFile())
+        return false;
+    const QFileInfo fileInfo(url.toLocalFile());
+    return fileInfo.exists() && !fileInfo.suffix().compare(QLatin1String("m3u"), Qt::CaseInsensitive);
+}
+void MainWindow::initMusicPlayControl()
+{
+    //init playList
+    QList<QString> list=musicPathList.toList();
+    for(int i=0;i<list.count();i++)
+    {
+        QUrl url=QUrl(list.at(i));
+        if(isPlaylist(url))
+            m_pMediaPlayList->load(url);
+        else
+             m_pMediaPlayList->addMedia(url);
+    };
+
+    ui->tBtn_PlayList->setText(QString::number(m_pMediaPlayList->mediaCount()));
+   // connect(musicPlayer, &QMediaPlayer::mediaStatusChanged, this, &MainWindow::statusChanged);
+    connect(musicPlayer,&QMediaPlayer::metaDataAvailableChanged,this,&MainWindow::updateTitle);
+    connect(ui->tBtn_Plsy,&QToolButton::clicked,[this](){
+        switch (musicPlayer->state()) {
+        case QMediaPlayer::StoppedState:
+        case QMediaPlayer::PausedState:
+            musicPlayer->play();
+            ui->tBtn_Plsy->setIcon(QIcon(":/Resources/ooopic_1501575085.png"));
+            break;
+        case QMediaPlayer::PlayingState:
+            musicPlayer->pause();
+            ui->tBtn_Plsy->setIcon(QIcon(":/Resources/ooopic_1501575097.png"));
+            break;
+        }
+    }); 
+    connect(ui->tBtn_Next,&QToolButton::clicked,m_pMediaPlayList,&QMediaPlaylist::next);
+    connect(ui->tBtn_Pre,&QToolButton::clicked,m_pMediaPlayList,&QMediaPlaylist::previous);
+    connect(musicPlayer, QOverload<>::of(&QMediaObject::metaDataChanged),[=](){
+        QString str=list.at(m_pMediaPlayList->currentIndex());
+        string  path=str.replace("/","//").toStdString();
+        MusicInfoData *data=analyzeMusicInfo_ffmpeg(path.data());
+        QString strMusicname=data->title();
+        QString strMusicArtist=data->artistName();
+        if(strMusicname.isEmpty())
+            strMusicname=QStringLiteral("未知");
+        if(strMusicArtist.isEmpty())
+            strMusicname=QStringLiteral("未知");
+        ui->label_musicName->setText(strMusicname+" - "+strMusicArtist);
+    });
+//    connect(musicPlayer,QOverload<const bool&>::of(&QMediaObject::metaDataAvailableChanged),[=](const bool& availibal){
+//        if(availibal)
+//        {
+//            qDebug()<<"Succeed!!"<<endl;
+//            QString strMusicname=musicPlayer->metaData(QMediaMetaData::Title).toString();
+//            ui->label_musicName->setText(strMusicname);
+//        }
+//    });
+//    connect(musicPlayer,&QMediaObject::metaDataAvailableChanged,[this](){
+//        if(musicPlayer->isMetaDataAvailable())
+//        {
+//            qDebug()<<"Succeed!!"<<endl;
+//            QString strMusicname=musicPlayer->metaData(QMediaMetaData::Title).toString();
+//            ui->label_musicName->setText(strMusicname);
+//        }
+//    });
+    connect(musicPlayer, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error),[this](){
+        qDebug()<<musicPlayer->errorString();
+    });
+    connect(musicPlayer, &QMediaPlayer::durationChanged,[this](){
+        m_Duration=musicPlayer->duration()/1000;
+        ui->music_Slider->setRange(0,m_Duration);
+    });
+    connect(musicPlayer, &QMediaPlayer::positionChanged, [this](){
+        qint64 progress=musicPlayer->position()/1000;
+        if (!ui->music_Slider->isSliderDown())
+            ui->music_Slider->setValue(progress);
+        QString tStr;
+        if (progress || m_Duration) {
+            QTime currentTime((progress / 3600) % 60, (progress / 60) % 60,
+                progress % 60, (progress * 1000) % 1000);
+            QTime totalTime((m_Duration / 3600) % 60, (m_Duration / 60) % 60,
+                m_Duration % 60, (m_Duration * 1000) % 1000);
+            QString format = "mm:ss";
+            if (m_Duration > 3600)
+                format = "hh:mm:ss";
+            tStr = currentTime.toString(format) + " / " + totalTime.toString(format);
+        }
+        ui->label_Duration->setText(tStr);
+    });
+    connect(ui->music_Slider,QOverload<int>::of(&QSlider::sliderMoved), this, &MainWindow::seek);
 }
 
 void MainWindow::getAllMusics(const QString &path)
@@ -241,14 +390,71 @@ QString MainWindow::getTags_2(const char *path)
     taglib_file_free(file);
     return str;
 }
-
 MusicInfoData *MainWindow::analyzeMusicInfo(const char *path)
 {
     MusicInfoData *data=new MusicInfoData();
     TagLib_File *file;
     TagLib_Tag *tag;
     const TagLib_AudioProperties *properties;
+    file=taglib_file_new(path);
+    tag=taglib_file_tag(file);
+    properties = taglib_file_audioproperties(file);
+    //infomation
+    if(file!=NULL&&tag!=NULL){
+        string temp=taglib_tag_title(tag);
+        data->setTitle(QString::fromStdString(temp));//title
+        temp=taglib_tag_artist(tag);
+        data->setArtistName(QString::fromStdString(temp));//artist
+        temp=taglib_tag_album(tag);
+        data->setAlbumName(QString::fromStdString(temp));//album
+    }
+    if(file!=NULL&&properties!=NULL){
+        int second=taglib_audioproperties_length(properties)%60;
+        int minute=(taglib_audioproperties_length(properties)-second)/60;
+        data->setDuration(QTime(0,minute,second));//duration
+    }
+    string pathTemp=path;
+    QFileInfo dir(QString::fromStdString(pathTemp));
+    if(dir.exists()){
+        qint64 size=dir.size();
+        data->setMusicSize(size/1024.0/1024.0);
+    }
 
+    taglib_tag_free_strings();
+    taglib_file_free(file);
+
+       return data;
+}
+
+MusicInfoData *MainWindow::analyzeMusicInfo_ffmpeg(const char *path)
+{
+    MusicInfoData *data=new MusicInfoData();
+    AVFormatContext *fmt_ctx = NULL; 
+    int ret;
+    av_register_all();
+    if ((ret = avformat_open_input(&fmt_ctx, path, NULL, NULL))){
+                printf("Fail to open file");
+            }
+    if (fmt_ctx->iformat->read_header(fmt_ctx) < 0) {
+                printf("No header format");
+            }
+    for (int i = 0; i < fmt_ctx->nb_streams; i++){
+                if (fmt_ctx->streams[i]->disposition & AV_DISPOSITION_ATTACHED_PIC) {
+                    AVPacket pkt = fmt_ctx->streams[i]->attached_pic;
+                    //使用QImage读取完整图片数据（注意，图片数据是为解析的文件数据，需要用QImage::fromdata来解析读取）
+                    albumImg = QImage::fromData((uchar*)pkt.data, pkt.size);
+                    QString path= QDir::currentPath()+"cover.jpg";
+                    albumImg.save(path);
+                    ui->tBtn_PlayShow->setIcon(QIcon(QPixmap::fromImage(albumImg)));
+                    break;
+                }
+    }
+
+
+    avformat_close_input(&fmt_ctx);
+    TagLib_File *file;
+    TagLib_Tag *tag;
+    const TagLib_AudioProperties *properties;
     file=taglib_file_new(path);
     tag=taglib_file_tag(file);
     properties = taglib_file_audioproperties(file);
@@ -276,6 +482,7 @@ MusicInfoData *MainWindow::analyzeMusicInfo(const char *path)
     taglib_tag_free_strings();
     taglib_file_free(file);
     return data;
+
 }
 
 void MainWindow::openMusicDirDlg()
@@ -284,5 +491,41 @@ void MainWindow::openMusicDirDlg()
     p_MusicDirDlr->resize(360,360);
     p_MusicDirDlr->setModal(true);
     p_MusicDirDlr->show();
+}
+
+void MainWindow::seek(int second)
+{
+    musicPlayer->setPosition(second*1000);
+}
+
+void MainWindow::updateTitle()
+{
+    if(musicPlayer->isMetaDataAvailable()){
+        qDebug()<<"Succeed!!"<<endl;
+        QString strMusicname=musicPlayer->metaData(QMediaMetaData::Title).toString();
+        ui->label_musicName->setText(strMusicname);
+    }
+}
+
+void MainWindow::statusChanged(QMediaPlayer::MediaStatus status)
+{
+    switch (status) {
+
+    case QMediaPlayer::LoadedMedia:
+         qDebug()<<musicPlayer->isMetaDataAvailable();
+          break;
+    case QMediaPlayer::LoadingMedia:
+        qDebug()<<"Loading.....";
+        break;
+    case QMediaPlayer::StalledMedia:
+       qDebug()<<"MediaStalled!";
+        break;
+    case QMediaPlayer::EndOfMedia:
+        QApplication::alert(this);
+        break;
+    case QMediaPlayer::InvalidMedia:
+       qDebug()<<"InvalidMedia!!";
+        break;
+    }
 }
 

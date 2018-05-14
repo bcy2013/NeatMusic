@@ -934,6 +934,11 @@ QScrollBar:up-arrow:vertical, QScrollBar:down-arrow:vertical {
            </property>
            <item>
             <widget class="QFrame" name="frame_3">
+             <property name="styleSheet">
+              <string notr="true">QFrame{
+    background-color:#fafafc;
+}</string>
+             </property>
              <property name="frameShape">
               <enum>QFrame::NoFrame</enum>
              </property>
@@ -1033,7 +1038,7 @@ QToolButton:pressed{ /*按下按钮后*/
                     <number>20</number>
                    </property>
                    <item>
-                    <widget class="QToolButton" name="toolButton_7">
+                    <widget class="QToolButton" name="tBtn_Pre">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -1048,11 +1053,11 @@ QToolButton:pressed{ /*按下按钮后*/
                      </property>
                      <property name="styleSheet">
                       <string notr="true">QToolButton{
-	background-color:#f3f3f5;
+	background-color:#fafafc;
     border:0px;
 }
 QToolButton:pressed{ /*按下按钮后*/  
-    background-color:#f3f3f5;  
+    background-color:#fafafc;  
     border:0px; 
     font:black;  
 }</string>
@@ -1062,7 +1067,7 @@ QToolButton:pressed{ /*按下按钮后*/
                      </property>
                      <property name="icon">
                       <iconset resource="rescources.qrc">
-                       <normaloff>:/Resources/btnPrevious1.png</normaloff>:/Resources/btnPrevious1.png</iconset>
+                       <normaloff>:/Resources/ooopic_1501575103.png</normaloff>:/Resources/ooopic_1501575103.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -1073,7 +1078,7 @@ QToolButton:pressed{ /*按下按钮后*/
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="toolButton_6">
+                    <widget class="QToolButton" name="tBtn_Plsy">
                      <property name="maximumSize">
                       <size>
                        <width>40</width>
@@ -1082,11 +1087,11 @@ QToolButton:pressed{ /*按下按钮后*/
                      </property>
                      <property name="styleSheet">
                       <string notr="true">QToolButton{
-	background-color:#f3f3f5;;
+	background-color:#fafafc;;
     border:0px;
 }
 QToolButton:pressed{ /*按下按钮后*/  
-    background-color:#f3f3f5;  
+    background-color:#fafafc;  
     border:0px; 
     font:black;  
 }</string>
@@ -1096,7 +1101,7 @@ QToolButton:pressed{ /*按下按钮后*/
                      </property>
                      <property name="icon">
                       <iconset resource="rescources.qrc">
-                       <normaloff>:/Resources/btnPlay1.png</normaloff>:/Resources/btnPlay1.png</iconset>
+                       <normaloff>:/Resources/ooopic_1501575097.png</normaloff>:/Resources/ooopic_1501575097.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -1107,7 +1112,7 @@ QToolButton:pressed{ /*按下按钮后*/
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="toolButton_5">
+                    <widget class="QToolButton" name="tBtn_Next">
                      <property name="maximumSize">
                       <size>
                        <width>40</width>
@@ -1116,11 +1121,11 @@ QToolButton:pressed{ /*按下按钮后*/
                      </property>
                      <property name="styleSheet">
                       <string notr="true">QToolButton{
-	background-color:#f3f3f5;
+	background-color:#fafafc;
     border:0px;
 }
 QToolButton:pressed{ /*按下按钮后*/  
-    background-color:#f3f3f5;  
+    background-color:#fafafc;  
     border:0px; 
     font:black;  
 }</string>
@@ -1130,7 +1135,7 @@ QToolButton:pressed{ /*按下按钮后*/
                      </property>
                      <property name="icon">
                       <iconset resource="rescources.qrc">
-                       <normaloff>:/Resources/btnNext1.png</normaloff>:/Resources/btnNext1.png</iconset>
+                       <normaloff>:/Resources/ooopic_1501575091.png</normaloff>:/Resources/ooopic_1501575091.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -1176,21 +1181,27 @@ QToolButton:pressed{ /*按下按钮后*/
                   <number>0</number>
                  </property>
                  <item row="0" column="0">
-                  <widget class="QLabel" name="label">
+                  <widget class="QLabel" name="label_musicName">
                    <property name="text">
-                    <string>歌曲名</string>
+                    <string/>
                    </property>
                   </widget>
                  </item>
                  <item row="0" column="1">
-                  <widget class="QLabel" name="label_2">
+                  <widget class="QLabel" name="label_Duration">
+                   <property name="maximumSize">
+                    <size>
+                     <width>80</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
                    <property name="text">
-                    <string>时间</string>
+                    <string/>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="0" colspan="2">
-                  <widget class="QSlider" name="horizontalSlider">
+                  <widget class="QSlider" name="music_Slider">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -1212,6 +1223,9 @@ QToolButton:pressed{ /*按下按钮后*/
                   <width>256</width>
                   <height>16777215</height>
                  </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
@@ -1259,11 +1273,11 @@ QToolButton:pressed{ /*按下按钮后*/
                      </property>
                      <property name="styleSheet">
                       <string notr="true">QToolButton{
-	background-color:#f3f3f5;
+	background-color:#fafafc;
     border:0px;
 }
 QToolButton:pressed{ /*按下按钮后*/  
-    background-color:#f3f3f5;  
+    background-color:#fafafc;  
     border:0px; 
     font:black;  
 }</string>
@@ -1273,7 +1287,7 @@ QToolButton:pressed{ /*按下按钮后*/
                      </property>
                      <property name="icon">
                       <iconset resource="rescources.qrc">
-                       <normaloff>:/Resources/btnLrc1.png</normaloff>:/Resources/btnLrc1.png</iconset>
+                       <normaloff>:/Resources/like_outline_32px_1170275_easyicon.net.png</normaloff>:/Resources/like_outline_32px_1170275_easyicon.net.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -1293,11 +1307,11 @@ QToolButton:pressed{ /*按下按钮后*/
                      </property>
                      <property name="styleSheet">
                       <string notr="true">QToolButton{
-	background-color:#f3f3f5;
+	background-color:#fafafc;
     border:0px;
 }
 QToolButton:pressed{ /*按下按钮后*/  
-    background-color:#f3f3f5;  
+    background-color:#fafafc;  
     border:0px; 
     font:black;  
 }</string>
@@ -1327,11 +1341,11 @@ QToolButton:pressed{ /*按下按钮后*/
                      </property>
                      <property name="styleSheet">
                       <string notr="true">QToolButton{
-	background-color:#f3f3f5;
+	background-color:#fafafc;
     border:0px;
 }
 QToolButton:pressed{ /*按下按钮后*/  
-    background-color:#f3f3f5;  
+    background-color:#fafafc;  
     border:0px; 
     font:black;  
 }</string>
@@ -1349,17 +1363,20 @@ QToolButton:pressed{ /*按下按钮后*/
                        <height>30</height>
                       </size>
                      </property>
+                     <property name="popupMode">
+                      <enum>QToolButton::DelayedPopup</enum>
+                     </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="toolButton_8">
+                    <widget class="QToolButton" name="tBtn_PlayList">
                      <property name="styleSheet">
                       <string notr="true">QToolButton{
-	background-color:#f3f3f5;
+	background-color:#fafafc;
     border:0px;
 }
 QToolButton:pressed{ /*按下按钮后*/  
-    background-color:#f3f3f5;  
+    background-color:#fafafc;  
     border:0px; 
     font:black;  
 }</string>
@@ -1376,6 +1393,9 @@ QToolButton:pressed{ /*按下按钮后*/
                        <width>30</width>
                        <height>30</height>
                       </size>
+                     </property>
+                     <property name="toolButtonStyle">
+                      <enum>Qt::ToolButtonTextBesideIcon</enum>
                      </property>
                     </widget>
                    </item>
