@@ -30,16 +30,12 @@ public:
     void initMusicPlayControl();
 
     void getAllMusics(const QString& path);
-    QString getTags(const char *path);
-    QString getTags_2(const char *path);
-    MusicInfoData * analyzeMusicInfo(const char *path);
-    MusicInfoData * analyzeMusicInfo_ffmpeg(const char *path);
+    MusicInfoData * analyzeMusicInfo(const char *path,bool isAnalyzePicture);
+    //MusicInfoData * analyzeMusicInfo_ffmpeg(const char *path);
 
 private slots:
     void openMusicDirDlg();
     void seek(int second);
-    void updateTitle();
-    void statusChanged(QMediaPlayer::MediaStatus status);
 signals:
 
 private:

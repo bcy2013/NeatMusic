@@ -20,11 +20,6 @@
 #include<QMediaPlayer>
 #include<QMediaPlaylist>
 
-
-#include <tag.h>
-#include <fileref.h>
-#include <tpropertymap.h>
-#include <tag_c.h>
 #include<iostream>
 using namespace std;
 
@@ -34,7 +29,7 @@ extern "C"
 #include "libavformat/avformat.h"
 #include "libswscale/swscale.h"
 #include "libavdevice/avdevice.h"
-#include <libavutil/dict.h>
+#include "libavutil/dict.h"
 }
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -97,8 +92,8 @@ void MainWindow::setModelView()
         QString str=list.at(i);
         if(str.isEmpty())
             continue;
-        string  path=str.replace("/","//").toStdString();
-        data1=analyzeMusicInfo(path.data());
+        std::string  path=str.replace("/","//").toStdString();
+        data1=analyzeMusicInfo(path.c_str(),false);
         listMusic.append(data1);
     };
     MusicListModel *musicListModel=new MusicListModel;
@@ -189,8 +184,6 @@ void MainWindow::setupMainWindow()
     m_pMediaPlayList->setPlaybackMode(QMediaPlaylist::PlaybackMode(m_dPlayListPlayMode));
     m_pMediaPlayList->setCurrentIndex(0);
     musicPlayer->setPlaylist(m_pMediaPlayList);
-    //m_pVideoWidget = new QVideoWidget(this);
-    //musicPlayer->setVideoOutput(m_pVideoWidget);
 }
 static bool isPlaylist(const QUrl &url) // Check for ".m3u" playlists.
 {
@@ -213,8 +206,6 @@ void MainWindow::initMusicPlayControl()
     };
 
     ui->tBtn_PlayList->setText(QString::number(m_pMediaPlayList->mediaCount()));
-   // connect(musicPlayer, &QMediaPlayer::mediaStatusChanged, this, &MainWindow::statusChanged);
-    connect(musicPlayer,&QMediaPlayer::metaDataAvailableChanged,this,&MainWindow::updateTitle);
     connect(ui->tBtn_Plsy,&QToolButton::clicked,[this](){
         switch (musicPlayer->state()) {
         case QMediaPlayer::StoppedState:
@@ -233,13 +224,13 @@ void MainWindow::initMusicPlayControl()
     connect(musicPlayer, QOverload<>::of(&QMediaObject::metaDataChanged),[=](){
         QString str=list.at(m_pMediaPlayList->currentIndex());
         string  path=str.replace("/","//").toStdString();
-        MusicInfoData *data=analyzeMusicInfo_ffmpeg(path.data());
+        MusicInfoData *data=analyzeMusicInfo(path.c_str(),true);
         QString strMusicname=data->title();
         QString strMusicArtist=data->artistName();
         if(strMusicname.isEmpty())
             strMusicname=QStringLiteral("未知");
         if(strMusicArtist.isEmpty())
-            strMusicname=QStringLiteral("未知");
+            strMusicArtist=QStringLiteral("未知");
         ui->label_musicName->setText(strMusicname+" - "+strMusicArtist);
     });
 //    connect(musicPlayer,QOverload<const bool&>::of(&QMediaObject::metaDataAvailableChanged),[=](const bool& availibal){
@@ -320,169 +311,65 @@ void MainWindow::getAllMusics(const QString &path)
             }
         }
 }
-
-QString MainWindow::getTags(const char* path)
-{
-            QString string;
-
-            TagLib::FileRef f(path);
-            if(!f.isNull()){
-                TagLib::Tag *tag = f.tag();
-                QString title = QString::fromStdWString(tag->title().toWString());
-                string = "标题: "+ title;
-            }
-
-
-            //TagLib::String album_string = file.tag()->album();
-           // QString title = QString::fromStdWString(title_string.toWString());
-            //QString  album = QString::fromStdWString(album_string.toCString());
-            //QString artist = QString::fromStdWString(file.tag()->artist().toCString());
-            //QString comment = QString::fromStdWString(file.tag()->comment().toCString());
-            //QString genre = QString::fromStdWString(file.tag()->artist().toCString());
-            //QString year = QString::number(file.tag()->year());
-            //+"\n唱片集:"+album + " \n艺术家:" + artist+"\n注释:"+comment+ " \n流派: " + genre+"\n年份: "+year;
-           // QString lengths = QString::number(file.audioProperties()->bitrate());
-           // string.append("\n比特率: ");
-           // string.append(lengths);
-           // string.append("kbps");
-            return string;
-}
-#include <stdio.h>
-QString MainWindow::getTags_2(const char *path)
-{
-    QString str;
-    int seconds;
-    int minutes;
-    TagLib_File *file;
-    TagLib_Tag *tag;
-    const TagLib_AudioProperties *properties;
-    file = taglib_file_new(path);
-    if(file == NULL)
-      qDebug()<<"Error!!";
-    tag = taglib_file_tag(file);
-    properties = taglib_file_audioproperties(file);
-    if(tag != NULL) {
-      //printf("-- TAG --\n");
-      //printf("title   - \"%s\"\n", taglib_tag_title(tag));
-      string str3=taglib_tag_title(tag);
-      str=QString::fromStdString(str3);
-//      printf("title   - \"%s\"\n", taglib_tag_title(tag));
-//      printf("artist  - \"%s\"\n", taglib_tag_artist(tag));
-//      printf("album   - \"%s\"\n", taglib_tag_album(tag));
-//      printf("year    - \"%i\"\n", taglib_tag_year(tag));
-//      printf("comment - \"%s\"\n", taglib_tag_comment(tag));
-//      printf("track   - \"%i\"\n", taglib_tag_track(tag));
-//      printf("genre   - \"%s\"\n", taglib_tag_genre(tag));
-    }
-
-//    if(properties != NULL) {
-//      seconds = taglib_audioproperties_length(properties) % 60;
-//      minutes = (taglib_audioproperties_length(properties) - seconds) / 60;
-
-//      printf("-- AUDIO --\n");
-//      printf("bitrate     - %i\n", taglib_audioproperties_bitrate(properties));
-//      printf("sample rate - %i\n", taglib_audioproperties_samplerate(properties));
-//      printf("channels    - %i\n", taglib_audioproperties_channels(properties));
-//      printf("length      - %i:%02i\n", minutes, seconds);
-//    }
-
-    taglib_tag_free_strings();
-    taglib_file_free(file);
-    return str;
-}
-MusicInfoData *MainWindow::analyzeMusicInfo(const char *path)
+#include"pinyin/pinyinhelper.h"
+MusicInfoData *MainWindow::analyzeMusicInfo(const char *path,bool isAnalyzePicture)
 {
     MusicInfoData *data=new MusicInfoData();
-    TagLib_File *file;
-    TagLib_Tag *tag;
-    const TagLib_AudioProperties *properties;
-    file=taglib_file_new(path);
-    tag=taglib_file_tag(file);
-    properties = taglib_file_audioproperties(file);
-    //infomation
-    if(file!=NULL&&tag!=NULL){
-        string temp=taglib_tag_title(tag);
-        data->setTitle(QString::fromStdString(temp));//title
-        temp=taglib_tag_artist(tag);
-        data->setArtistName(QString::fromStdString(temp));//artist
-        temp=taglib_tag_album(tag);
-        data->setAlbumName(QString::fromStdString(temp));//album
-    }
-    if(file!=NULL&&properties!=NULL){
-        int second=taglib_audioproperties_length(properties)%60;
-        int minute=(taglib_audioproperties_length(properties)-second)/60;
-        data->setDuration(QTime(0,minute,second));//duration
-    }
-    string pathTemp=path;
-    QFileInfo dir(QString::fromStdString(pathTemp));
-    if(dir.exists()){
-        qint64 size=dir.size();
-        data->setMusicSize(size/1024.0/1024.0);
-    }
-
-    taglib_tag_free_strings();
-    taglib_file_free(file);
-
-       return data;
-}
-
-MusicInfoData *MainWindow::analyzeMusicInfo_ffmpeg(const char *path)
-{
-    MusicInfoData *data=new MusicInfoData();
-    AVFormatContext *fmt_ctx = NULL; 
-    int ret;
     av_register_all();
-    if ((ret = avformat_open_input(&fmt_ctx, path, NULL, NULL))){
-                printf("Fail to open file");
-            }
-    if (fmt_ctx->iformat->read_header(fmt_ctx) < 0) {
-                printf("No header format");
-            }
-    for (int i = 0; i < fmt_ctx->nb_streams; i++){
-                if (fmt_ctx->streams[i]->disposition & AV_DISPOSITION_ATTACHED_PIC) {
-                    AVPacket pkt = fmt_ctx->streams[i]->attached_pic;
-                    //使用QImage读取完整图片数据（注意，图片数据是为解析的文件数据，需要用QImage::fromdata来解析读取）
-                    albumImg = QImage::fromData((uchar*)pkt.data, pkt.size);
-                    QString path= QDir::currentPath()+"//cover.jpg";
-                    albumImg.save(path);
-                    ui->tBtn_PlayShow->setIcon(QIcon(QPixmap::fromImage(albumImg)));
-                    break;
-                }
-    }
+    AVFormatContext *fmt_ctx = NULL;
+    AVDictionaryEntry *tag = NULL;
+    int ret = avformat_open_input(&fmt_ctx, path, NULL, NULL);
+    while (!ret&&(tag = av_dict_get(fmt_ctx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))){
+       std::string temp_key=tag->key;
+       std::string temp_value=tag->value;
+       QString key=QString::fromStdString(temp_key);
+       QString value=QString::fromStdString(temp_value);
+        if(key=="title")
+        {
+            data->setTitle(value);
+            continue;
+        }
+        if(key=="artist"){
+            data->setArtistName(value);
+            continue;
+        }
 
+        if(key=="album"){
+            data->setAlbumName(value);
+            continue;
+        }
 
-    avformat_close_input(&fmt_ctx);
-    TagLib_File *file;
-    TagLib_Tag *tag;
-    const TagLib_AudioProperties *properties;
-    file=taglib_file_new(path);
-    tag=taglib_file_tag(file);
-    properties = taglib_file_audioproperties(file);
-    //infomation
-    if(file!=NULL&&tag!=NULL){
-        string temp=taglib_tag_title(tag);
-        data->setTitle(QString::fromStdString(temp));//title
-        temp=taglib_tag_artist(tag);
-        data->setArtistName(QString::fromStdString(temp));//artist
-        temp=taglib_tag_album(tag);
-        data->setAlbumName(QString::fromStdString(temp));//album
     }
-    if(file!=NULL&&properties!=NULL){
-        int second=taglib_audioproperties_length(properties)%60;
-        int minute=(taglib_audioproperties_length(properties)-second)/60;
+        avformat_find_stream_info(fmt_ctx, NULL);
+        qint64 duration=fmt_ctx->duration/1000/1000;//ms->s
+        int second=duration%60;
+        int minute=(duration-second)/60;
         data->setDuration(QTime(0,minute,second));//duration
-    }
+
     string pathTemp=path;
     QFileInfo dir(QString::fromStdString(pathTemp));
     if(dir.exists()){
         qint64 size=dir.size();
         data->setMusicSize(size/1024.0/1024.0);
     }
-
-    taglib_tag_free_strings();
-    taglib_file_free(file);
+      if(isAnalyzePicture){
+          if (fmt_ctx->iformat->read_header(fmt_ctx) < 0) {
+                      printf("No header format");
+                  }
+           for (int i = 0; i < fmt_ctx->nb_streams; i++){
+                          if (fmt_ctx->streams[i]->disposition & AV_DISPOSITION_ATTACHED_PIC) {
+                              AVPacket pkt = fmt_ctx->streams[i]->attached_pic;
+                              albumImg = QImage::fromData((uchar*)pkt.data, pkt.size);
+                              QString path= QDir::currentPath()+"//cover.jpg";
+                              albumImg.save(path);
+                              ui->tBtn_PlayShow->setIcon(QIcon(QPixmap::fromImage(albumImg)));
+                              break;
+           }
+      }
+  }
+    avformat_close_input(&fmt_ctx);
+    avformat_free_context(fmt_ctx);
     return data;
-
 }
 
 void MainWindow::openMusicDirDlg()
@@ -496,36 +383,5 @@ void MainWindow::openMusicDirDlg()
 void MainWindow::seek(int second)
 {
     musicPlayer->setPosition(second*1000);
-}
-
-void MainWindow::updateTitle()
-{
-    if(musicPlayer->isMetaDataAvailable()){
-        qDebug()<<"Succeed!!"<<endl;
-        QString strMusicname=musicPlayer->metaData(QMediaMetaData::Title).toString();
-        ui->label_musicName->setText(strMusicname);
-    }
-}
-
-void MainWindow::statusChanged(QMediaPlayer::MediaStatus status)
-{
-    switch (status) {
-
-    case QMediaPlayer::LoadedMedia:
-         qDebug()<<musicPlayer->isMetaDataAvailable();
-          break;
-    case QMediaPlayer::LoadingMedia:
-        qDebug()<<"Loading.....";
-        break;
-    case QMediaPlayer::StalledMedia:
-       qDebug()<<"MediaStalled!";
-        break;
-    case QMediaPlayer::EndOfMedia:
-        QApplication::alert(this);
-        break;
-    case QMediaPlayer::InvalidMedia:
-       qDebug()<<"InvalidMedia!!";
-        break;
-    }
 }
 
