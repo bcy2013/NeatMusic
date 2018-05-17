@@ -21,7 +21,7 @@ MusicDbManager::MusicDbManager(const QString &path, const bool &doWhat, QObject 
         "                              favourite INIEGER,"
         "                              size REAL);"
                                );
-        query.exec(createDBMusic);
+        bool i=query.exec(createDBMusic);
     }
 }
 
@@ -59,7 +59,7 @@ bool MusicDbManager::modifyOneMusic(MusicInfoData *data)
 {
     QSqlQuery query;
     bool modify_favourite=data->isFavourite();
-    QString queryStr=QStringLiteral("UPDATE all_music_info SET favourite=%1;").arg(modify_favourite);
+    QString queryStr=QStringLiteral("UPDATE all_music_info SET favourite=%1 WHERE title='%2' AND album='%3';").arg(modify_favourite).arg(data->title()).arg(data->albumName());
     query.exec(queryStr);
     return (query.numRowsAffected()==1);
 }
@@ -142,4 +142,17 @@ MusicInfoData *MusicDbManager::getOneMusic(const QString &titleQuery, const QStr
         return data;
     }
     return Q_NULLPTR;
+}
+
+int MusicDbManager::getOneMusicID(const QString &titleQuery, const QString &albumQuery)
+{
+    QSqlQuery query;
+    QString queryStr=QStringLiteral("SELECT id FROM all_music_info WHERE title='%1' AND album='%2' LIMIT 1;").arg(titleQuery).arg(albumQuery);
+    query.exec(queryStr);
+    if(query.first()){
+        int id=query.value(0).toInt();
+        return id;
+    }
+    return -1;
+
 }

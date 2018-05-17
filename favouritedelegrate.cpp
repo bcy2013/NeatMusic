@@ -14,6 +14,16 @@ FavouriteDelegrate::FavouriteDelegrate(QObject *parent) : QSqlRelationalDelegate
 
 void FavouriteDelegrate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+
+    if((option.state&QStyle::State_Selected)==QStyle::State_Selected)
+    {
+         painter->fillRect(option.rect,QBrush(m_SelectedColor));
+    }
+    else if((option.state&QStyle::State_MouseOver)==QStyle::State_MouseOver)
+    {
+        painter->fillRect(option.rect,QBrush(m_HoverColor));
+    }
+
     QStyleOptionViewItem opt=option;//这里的矩形框是单元格，和liseView不同
     double rowPosX = option.rect.x();
     double rowPosY = option.rect.y();
@@ -48,7 +58,6 @@ void FavouriteDelegrate::paint(QPainter *painter, const QStyleOptionViewItem &op
            title = fontMetrics.elidedText(title, Qt::ElideRight, strWidth);
            painter->drawText(rect,Qt::AlignVCenter,title);
     }else {
-
           strWidth=rowWidth*0.8;
           QString str=model->data(index,Qt::DisplayRole).toString();
           str = fontMetrics.elidedText(str, Qt::ElideRight, strWidth);
@@ -59,15 +68,11 @@ void FavouriteDelegrate::paint(QPainter *painter, const QStyleOptionViewItem &op
 QSize FavouriteDelegrate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QSize result=QSqlRelationalDelegate::sizeHint(option, index);
-    qDebug()<<option.rect;
-    result.setHeight(m_iRowHeight);
-    if(index.column()==0){
-        result.setWidth(43);
-         return result;
+    if(index.column()==1){
+        result.setWidth(50);
     }
-    return QSqlRelationalDelegate::sizeHint(option, index);
-
-
+    result.setHeight(m_iRowHeight);
+    return result;
 }
 
 //void FavouriteDelegrate::paintLabels(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const

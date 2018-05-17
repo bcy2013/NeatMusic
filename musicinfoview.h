@@ -29,6 +29,10 @@ protected:
 private:
     bool m_isScrollBarHidden;
     bool m_isMousePressed;
+
+    // QWidget interface
+protected:
+    void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 };
 
 #endif // MUSICINFOVIEW_H

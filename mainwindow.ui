@@ -449,7 +449,7 @@ QToolButton:pressed{ /*按下按钮后*/
                 </item>
                </layout>
               </widget>
-              <widget class="QWidget" name="topRightStackedWidgetPage1" native="true">
+              <widget class="QWidget" name="topRightStackedWidgetPage1">
                <layout class="QGridLayout" name="gridLayout_4">
                 <property name="leftMargin">
                  <number>0</number>

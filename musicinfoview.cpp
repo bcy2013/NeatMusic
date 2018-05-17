@@ -152,3 +152,8 @@ bool MusicInfoView::viewportEvent(QEvent *e)
 
     return QListView::viewportEvent(e);
 }
+
+void MusicInfoView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    QListView::mouseDoubleClickEvent(event);
+}

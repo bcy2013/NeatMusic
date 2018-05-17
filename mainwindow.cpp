@@ -162,6 +162,8 @@ void MainWindow::setupSignalsSlots()
     connect(ui->listView,&MusicView::clicked,[this](){
         ui->topRightStackedWidget->setCurrentIndex(ui->listView->currentIndex().row());
     });
+
+
 }
 
 void MainWindow::setupMainWindow()
@@ -225,6 +227,7 @@ void MainWindow::initMusicPlayControl()
         if(strMusicArtist.isEmpty())
             strMusicArtist=QStringLiteral("未知");
         ui->label_musicName->setText(strMusicname+" - "+strMusicArtist);
+        m_bIsAddLikeList=(m_pDbMusicManager->getOneMusic(strMusicname,sttMusicAlbum))->isFavourite();
         if((m_pDbMusicManager->getOneMusic(strMusicname,sttMusicAlbum))->isFavourite())
             ui->tBtn_Love->setIcon(QIcon(":/Resources/like_32px_1101682_easyicon.net.png"));
         else
@@ -295,6 +298,14 @@ void MainWindow::initMusicPlayControl()
         addLoveList->pop();
         addLoveList->move(this->x()+(this->width()-addLoveList->width())/2,this->y()+(this->height()-addLoveList->height())/2);
     });
+    connect(ui->listView_2,&MusicView::doubleClicked,[=](){
+        QString currentTitle=ui->listView_2->currentIndex().data(MusicListModel::title).toString();
+        QString currentAlbum=ui->listView_2->currentIndex().data(MusicListModel::album).toString();
+        int id=m_pDbMusicManager->getOneMusicID(currentTitle,currentAlbum);
+        m_pMediaPlayList->setCurrentIndex(id-1);
+        musicPlayer->play();
+        ui->tBtn_Plsy->setIcon(QIcon(":/Resources/ooopic_1501575085.png"));
+    });
 }
 
 void MainWindow::initDatabase()
@@ -309,7 +320,7 @@ void MainWindow::initDatabase()
      if(!foldCreated)
          qDebug()<<"FoldCreate Failed!!";
      QString dbPath(dir.path()+QStringLiteral("/music.db"));
-     if(!QFile::exists(dbPath)){
+     if(QFile::exists(dbPath)){
          QFile dbFile(dbPath);
          if(!dbFile.open(QIODevice::WriteOnly)){
              qFatal("ERROR : Can't create database file");
