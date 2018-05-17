@@ -59,6 +59,11 @@ int MusicInfoData::parentRow() const
     return m_iParentRow;
 }
 
+QString MusicInfoData::path() const
+{
+    return m_strPath;
+}
+
 void MusicInfoData::setTitle(const QString &title)
 {
     m_strTitle=title;
@@ -94,9 +99,14 @@ void MusicInfoData::setIsFavourite(const bool &isFavourite)
     m_bIsFavourite=isFavourite;
 }
 
+void MusicInfoData::setPath(const QString &path)
+{
+    m_strPath=path;
+}
+
 QDataStream &operator<<(QDataStream &stream, const MusicInfoData *listData)
 {
-    return stream<<listData->title()<<listData->artistName()<<listData->duration()<<listData->albumName()<<listData->musicSize()<<listData->parentRow()<<listData->isFavourite();
+    return stream<<listData->title()<<listData->artistName()<<listData->duration()<<listData->albumName()<<listData->musicSize()<<listData->parentRow()<<listData->isFavourite()<<listData->path();
 }
 
 QDataStream &operator>>(QDataStream &stream, MusicInfoData *&listData)
@@ -109,7 +119,8 @@ QDataStream &operator>>(QDataStream &stream, MusicInfoData *&listData)
     qreal size;
     int parent;
     bool favourite;
-    stream>>title>>artist>>duration>>album>>size>>parent>>favourite;
+    QString path;
+    stream>>title>>artist>>duration>>album>>size>>parent>>favourite>>path;
     listData->setTitle(title);
     listData->setArtistName(artist);
     listData->setDuration(duration);
@@ -117,5 +128,6 @@ QDataStream &operator>>(QDataStream &stream, MusicInfoData *&listData)
     listData->setMusicSize(size);
     listData->setParentRow(parent);
     listData->setIsFavourite(favourite);
+    listData->setPath(path);
     return stream;
 }

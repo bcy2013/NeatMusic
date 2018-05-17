@@ -12,6 +12,7 @@
 #include"playmusicshow.h"
 #include"albumshow.h"
 
+
 #include<QUrl>
 #include<QFileInfo>
 #include<QDir>
@@ -39,9 +40,11 @@ MainWindow::MainWindow(QWidget *parent) :
    m_dPlayListPlayMode(3),
    m_bIsAddLikeList(false)
 {
+
+    initDatabase();
     ui->setupUi(this);
     setupMainWindow();
-    initDatabase();
+
     setModelView();
     setupSignalsSlots();
 }
@@ -95,6 +98,7 @@ void MainWindow::setModelView()
             continue;
         std::string  path=str.replace("/","//").toStdString();
         data1=analyzeMusicInfo(path.c_str(),false);
+        data1->setPath(str);
         //m_pDbMusicManager->addOneMusic(data1);
         if(!m_pDbMusicManager->isExist(data1))
             QtConcurrent::run(m_pDbMusicManager,&MusicDbManager::addOneMusic,data1);
@@ -163,7 +167,7 @@ void MainWindow::setupSignalsSlots()
         ui->topRightStackedWidget->setCurrentIndex(ui->listView->currentIndex().row());
     });
 
-
+   connect(this,&MainWindow::dataBaseChanged,ui->page_2,&Favourite::updateView);
 }
 
 void MainWindow::setupMainWindow()
@@ -295,14 +299,16 @@ void MainWindow::initMusicPlayControl()
         }
         data->setIsFavourite(m_bIsAddLikeList);
         m_pDbMusicManager->modifyOneMusic(data);
+        emit dataBaseChanged();
         addLoveList->pop();
         addLoveList->move(this->x()+(this->width()-addLoveList->width())/2,this->y()+(this->height()-addLoveList->height())/2);
     });
     connect(ui->listView_2,&MusicView::doubleClicked,[=](){
         QString currentTitle=ui->listView_2->currentIndex().data(MusicListModel::title).toString();
         QString currentAlbum=ui->listView_2->currentIndex().data(MusicListModel::album).toString();
-        int id=m_pDbMusicManager->getOneMusicID(currentTitle,currentAlbum);
-        m_pMediaPlayList->setCurrentIndex(id-1);
+        QString path=m_pDbMusicManager->getOneMusicPath(currentTitle,currentAlbum);
+        int id=list.indexOf(path.replace("//","/"));
+        m_pMediaPlayList->setCurrentIndex(id);
         musicPlayer->play();
         ui->tBtn_Plsy->setIcon(QIcon(":/Resources/ooopic_1501575085.png"));
     });
@@ -320,7 +326,7 @@ void MainWindow::initDatabase()
      if(!foldCreated)
          qDebug()<<"FoldCreate Failed!!";
      QString dbPath(dir.path()+QStringLiteral("/music.db"));
-     if(QFile::exists(dbPath)){
+     if(!QFile::exists(dbPath)){
          QFile dbFile(dbPath);
          if(!dbFile.open(QIODevice::WriteOnly)){
              qFatal("ERROR : Can't create database file");

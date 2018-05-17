@@ -41,14 +41,26 @@ Favourite::Favourite(QWidget *parent) :
     ui->tableView->setFocusPolicy(Qt::NoFocus);
     ui->tableView->setColumnHidden(model->fieldIndex("favourite"),true);
     ui->tableView->setColumnHidden(model->fieldIndex("size"),true);
+     ui->tableView->setColumnHidden(model->fieldIndex("path"),true);
     ui->tableView->horizontalHeader()->resizeSection(0,50);
     ui->tableView->horizontalHeader()->resizeSection(1,304);
     ui->tableView->resizeRowsToContents();
     //ui->tableView->resizeColumnsToContents();
     //ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
 }
 
 Favourite::~Favourite()
 {
     delete ui;
+}
+
+void Favourite::updateView()
+{
+    model->setFilter("favourite=1");
+    if (!model->select()) {
+        qDebug()<<model->lastError();
+    }
+    ui->tableView->resizeRowsToContents();
+   // ui->tableView->update();
 }

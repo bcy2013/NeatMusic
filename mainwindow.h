@@ -41,13 +41,14 @@ private slots:
     void openMusicDirDlg();
     void seek(int second);
 signals:
-
+    void dataBaseChanged();
 private:
     Ui::MainWindow *ui;
     MusicView *m_MusicView;
     MusicInfoView *m_MusicInfoView;
     PlayMusicShow *m_pPlayMusicShow;
     QSettings *m_pSettings;
+
     MusicDbManager *m_pDbMusicManager;
     int m_intCount;
 

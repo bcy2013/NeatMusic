@@ -15,6 +15,8 @@ class Favourite : public QWidget
 public:
     explicit Favourite(QWidget *parent = 0);
     ~Favourite();
+public slots:
+    void updateView();
 
 private:
     Ui::Favourite *ui;
