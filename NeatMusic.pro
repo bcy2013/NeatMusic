@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 CONFIG +=  c++11
-QT += core gui
+QT += core gui sql concurrent
 QT += multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -38,7 +38,10 @@ SOURCES += \
     toast.cpp \
     playmusicshow.cpp \
     albumshow.cpp \
-    bar.cpp
+    bar.cpp \
+    musicdbmanager.cpp \
+    favourite.cpp \
+    favouritedelegrate.cpp
 HEADERS += \
         mainwindow.h \
     musicview.h \
@@ -54,10 +57,14 @@ HEADERS += \
     playmusicshow.h \
     filter.h \
     albumshow.h \
-    bar.h
+    bar.h \
+    musicdbmanager.h \
+    favourite.h \
+    favouritedelegrate.h
 FORMS += \
         mainwindow.ui \
-    musicdirdlg.ui
+    musicdirdlg.ui \
+    favourite.ui
 
 RESOURCES += \
     rescources.qrc \

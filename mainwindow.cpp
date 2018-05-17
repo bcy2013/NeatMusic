@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setupMainWindow();
+    initDatabase();
     setModelView();
     setupSignalsSlots();
 }
@@ -68,18 +69,18 @@ void MainWindow::setModelView()
     data->setItemContent("MV");
     model->addItem(data);
     data=new ListViewItemDate();
-    data->setItemIcon(QPixmap(":/Resources/btnSearch1.png"));
-    data->setItemContent(QStringLiteral("朋友"));
+    data->setItemIcon(QPixmap(":/Resources/btnmusic2.png"));
+    data->setItemContent(QStringLiteral("我喜欢的音乐"));
     model->addItem(data);
     m_MusicView->setModel(model);
     m_MusicView->setCurrentIndex(model->index(1));
+    ui->topRightStackedWidget->setCurrentIndex(1);
     //音乐列表
     m_MusicInfoView=static_cast<MusicInfoView *>(ui->listView_2);
     m_MusicInfoView->setItemDelegate(new MusicInfoListDelegrate(m_MusicInfoView));
     QList<MusicInfoData *> listMusic;
     MusicInfoData *data1;
     //读取配置文件里的音乐目录，并遍历所有文件，完成ｌｉｓｔＭｕｓｉｃ　ｍｏｄｅｌ的创建
-    m_pSettings=new QSettings(QSettings::IniFormat, QSettings::UserScope,QStringLiteral("PersonProject"), QStringLiteral("NeatMusic"), this);
     QString urls=m_pSettings->value("Urls").toString();
     QStringList strList=urls.split(';');
     int temp=strList.removeAll("");
@@ -94,6 +95,9 @@ void MainWindow::setModelView()
             continue;
         std::string  path=str.replace("/","//").toStdString();
         data1=analyzeMusicInfo(path.c_str(),false);
+        //m_pDbMusicManager->addOneMusic(data1);
+        if(!m_pDbMusicManager->isExist(data1))
+            QtConcurrent::run(m_pDbMusicManager,&MusicDbManager::addOneMusic,data1);
         listMusic.append(data1);
     };
     MusicListModel *musicListModel=new MusicListModel;
@@ -140,23 +144,7 @@ void MainWindow::setupSignalsSlots()
         playModel->pop();
         playModel->move(this->x()+(this->width()-playModel->width())/2,this->y()+(this->height()-playModel->height())/2);
     });
-    connect(ui->tBtn_Love,&QToolButton::clicked,[this](){
-        Toast *addLoveList=new Toast(this);
-        m_bIsAddLikeList=!m_bIsAddLikeList;
-        if(m_bIsAddLikeList){
-            addLoveList->resize(270,170);
-            addLoveList->setPicture(true);
-            addLoveList->setText(QStringLiteral("已添加到喜欢列表"));
-            ui->tBtn_Love->setIcon(QIcon(":/Resources/like_32px_1101682_easyicon.net.png"));
-        }else{
-            addLoveList->resize(180,50);
-            addLoveList->setPicture(false);
-            addLoveList->setText(QStringLiteral("以从喜欢列表中移除"));
-             ui->tBtn_Love->setIcon(QIcon(":/Resources/like_outline_32px_1170275_easyicon.net.png"));
-        }
-        addLoveList->pop();
-        addLoveList->move(this->x()+(this->width()-addLoveList->width())/2,this->y()+(this->height()-addLoveList->height())/2);
-    });
+
 
     connect(ui->tBtn_PlayShow,&QToolButton::toggled,[this](){
         if(ui->tBtn_PlayShow->isChecked()==true)
@@ -169,6 +157,10 @@ void MainWindow::setupSignalsSlots()
         {
             m_pPlayMusicShow->toMin();
         }
+    });
+
+    connect(ui->listView,&MusicView::clicked,[this](){
+        ui->topRightStackedWidget->setCurrentIndex(ui->listView->currentIndex().row());
     });
 }
 
@@ -227,11 +219,16 @@ void MainWindow::initMusicPlayControl()
         MusicInfoData *data=analyzeMusicInfo(path.c_str(),true);
         QString strMusicname=data->title();
         QString strMusicArtist=data->artistName();
+        QString sttMusicAlbum=data->albumName();
         if(strMusicname.isEmpty())
             strMusicname=QStringLiteral("未知");
         if(strMusicArtist.isEmpty())
             strMusicArtist=QStringLiteral("未知");
         ui->label_musicName->setText(strMusicname+" - "+strMusicArtist);
+        if((m_pDbMusicManager->getOneMusic(strMusicname,sttMusicAlbum))->isFavourite())
+            ui->tBtn_Love->setIcon(QIcon(":/Resources/like_32px_1101682_easyicon.net.png"));
+        else
+            ui->tBtn_Love->setIcon(QIcon(":/Resources/like_outline_32px_1170275_easyicon.net.png"));
     });
 //    connect(musicPlayer,QOverload<const bool&>::of(&QMediaObject::metaDataAvailableChanged),[=](const bool& availibal){
 //        if(availibal)
@@ -274,6 +271,54 @@ void MainWindow::initMusicPlayControl()
         ui->label_Duration->setText(tStr);
     });
     connect(ui->music_Slider,QOverload<int>::of(&QSlider::sliderMoved), this, &MainWindow::seek);
+    connect(ui->tBtn_Love,&QToolButton::clicked,[=](){
+        Toast *addLoveList=new Toast(this);
+        m_bIsAddLikeList=!m_bIsAddLikeList;
+        QString str=list.at(m_pMediaPlayList->currentIndex());
+        string  path=str.replace("/","//").toStdString();
+        MusicInfoData *data=analyzeMusicInfo(path.c_str(),false);
+
+        if(m_bIsAddLikeList){
+            addLoveList->resize(270,170);
+            addLoveList->setPicture(true);
+            addLoveList->setText(QStringLiteral("已添加到喜欢列表"));
+            ui->tBtn_Love->setIcon(QIcon(":/Resources/like_32px_1101682_easyicon.net.png"));
+
+        }else{
+            addLoveList->resize(180,50);
+            addLoveList->setPicture(false);
+            addLoveList->setText(QStringLiteral("以从喜欢列表中移除"));
+             ui->tBtn_Love->setIcon(QIcon(":/Resources/like_outline_32px_1170275_easyicon.net.png"));
+        }
+        data->setIsFavourite(m_bIsAddLikeList);
+        m_pDbMusicManager->modifyOneMusic(data);
+        addLoveList->pop();
+        addLoveList->move(this->x()+(this->width()-addLoveList->width())/2,this->y()+(this->height()-addLoveList->height())/2);
+    });
+}
+
+void MainWindow::initDatabase()
+{
+     m_pSettings=new QSettings(QSettings::IniFormat, QSettings::UserScope,QStringLiteral("PersonProject"), QStringLiteral("NeatMusic"), this);
+     m_pSettings->setFallbacksEnabled(false);
+     //initSettingsDataBase();
+     bool doWhat=false;
+     QFileInfo fi(m_pSettings->fileName());
+     QDir dir(fi.absolutePath());
+     bool foldCreated=dir.mkpath(QStringLiteral("."));
+     if(!foldCreated)
+         qDebug()<<"FoldCreate Failed!!";
+     QString dbPath(dir.path()+QStringLiteral("/music.db"));
+     if(!QFile::exists(dbPath)){
+         QFile dbFile(dbPath);
+         if(!dbFile.open(QIODevice::WriteOnly)){
+             qFatal("ERROR : Can't create database file");
+         }
+         dbFile.close();
+         doWhat=true;
+     }
+    m_pDbMusicManager=new MusicDbManager(dbPath,doWhat,this);
+    //m_intCount=m_pDbMusicManager->getLastRowID();
 }
 
 void MainWindow::getAllMusics(const QString &path)

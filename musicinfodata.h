@@ -17,13 +17,15 @@ public:
     QTime duration()const;
     QString albumName()const;
     qreal musicSize()const;
-     int parentRow()const;
+    bool  isFavourite()const;
+    int parentRow()const;
     void setTitle(const QString& title);
     void setArtistName(const QString& artistName);
     void setDuration(const QTime& duration);
     void setAlbumName(const QString& albumName);
     void setMusicSize(const qreal& musicSize);
     void setParentRow(const int& parentRow);
+    void setIsFavourite(const bool&isFavourite);
 
 
 signals:
@@ -36,6 +38,7 @@ private:
   QString m_strAlbumName;
   qreal m_fMusicSize;
   int m_iParentRow;
+  bool m_bIsFavourite;
 };
 QDataStream &operator<<(QDataStream &stream, const MusicInfoData* listData);
 QDataStream &operator>>(QDataStream &stream, MusicInfoData *&listData);

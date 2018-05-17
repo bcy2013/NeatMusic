@@ -68,6 +68,7 @@ void MusicInfoListDelegrate::paintLabels(QPainter *painter, const QStyleOptionVi
     //double rowPosY = option.rect.y();
     double rowWidth = option.rect.width();
     double rowHeight=option.rect.height();
+
     int fontMetricsWidthOffSet=30;
     QRect rect=option.rect;
     QString str=index.data(MusicListModel::title).toString();

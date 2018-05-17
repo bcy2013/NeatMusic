@@ -8,10 +8,14 @@
 
 #include"musicdirdlg.h"
 #include"playmusicshow.h"
+#include"musicdbmanager.h"
+
+
 #include<QStringList>
 #include<QMediaPlaylist>
 #include<QMediaPlayer>
 #include<QSet>
+#include<QtConcurrent>
 class MusicInfoData;
 namespace Ui {
 class MainWindow;
@@ -28,7 +32,7 @@ public:
     void setupSignalsSlots();
     void setupMainWindow();
     void initMusicPlayControl();
-
+    void initDatabase();
     void getAllMusics(const QString& path);
     MusicInfoData * analyzeMusicInfo(const char *path,bool isAnalyzePicture);
     //MusicInfoData * analyzeMusicInfo_ffmpeg(const char *path);
@@ -44,6 +48,9 @@ private:
     MusicInfoView *m_MusicInfoView;
     PlayMusicShow *m_pPlayMusicShow;
     QSettings *m_pSettings;
+    MusicDbManager *m_pDbMusicManager;
+    int m_intCount;
+
     QSet<QString> musicPathList;
     QMediaPlaylist *m_pMediaPlayList;
     QMediaPlayer *musicPlayer=NULL;

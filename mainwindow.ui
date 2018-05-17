@@ -419,93 +419,117 @@ QToolButton:pressed{ /*按下按钮后*/
                </item>
               </layout>
              </widget>
-             <widget class="QFrame" name="topRightFrame">
+             <widget class="QStackedWidget" name="topRightStackedWidget">
               <property name="frameShape">
                <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Plain</enum>
               </property>
-              <layout class="QGridLayout" name="gridLayout_4">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <property name="spacing">
-                <number>0</number>
-               </property>
-               <item row="0" column="0">
-                <widget class="QFrame" name="frame_8">
-                 <property name="styleSheet">
-                  <string notr="true">QFrame{
+              <widget class="QWidget" name="page_3">
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <item>
+                 <widget class="QFrame" name="frame_9">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_5">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label">
+                     <property name="text">
+                      <string>Page 0</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="topRightStackedWidgetPage1" native="true">
+               <layout class="QGridLayout" name="gridLayout_4">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QFrame" name="frame_8">
+                  <property name="styleSheet">
+                   <string notr="true">QFrame{
     background-color:#fafafc;
 }</string>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::NoFrame</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Plain</enum>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_4">
-                  <property name="spacing">
-                   <number>0</number>
                   </property>
-                  <property name="leftMargin">
-                   <number>30</number>
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
                   </property>
-                  <property name="topMargin">
-                   <number>20</number>
+                  <property name="frameShadow">
+                   <enum>QFrame::Plain</enum>
                   </property>
-                  <property name="rightMargin">
-                   <number>30</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_10">
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <item>
-                     <widget class="QLabel" name="label_3">
-                      <property name="text">
-                       <string>本地音乐</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <spacer name="horizontalSpacer_4">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item>
-                     <widget class="QToolButton" name="toolButton_FileOpen">
-                      <property name="maximumSize">
-                       <size>
-                        <width>90</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">QToolButton{
+                  <layout class="QVBoxLayout" name="verticalLayout_4">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>30</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>20</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>30</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_10">
+                     <property name="spacing">
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <widget class="QLabel" name="label_3">
+                       <property name="text">
+                        <string>本地音乐</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer_4">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item>
+                      <widget class="QToolButton" name="toolButton_FileOpen">
+                       <property name="maximumSize">
+                        <size>
+                         <width>90</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">QToolButton{
 	background-color:#fafafc;
     border:0px;      
 	font: 10pt &quot;Microsoft YaHei UI&quot;;
@@ -514,25 +538,25 @@ QToolButton:pressed{ /*按下按钮后*/
 QToolButton:pressed{ /*按下按钮后*/  
     background-color:#fafafc;   
 }</string>
-                      </property>
-                      <property name="text">
-                       <string>选择项目</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="rescources.qrc">
-                        <normaloff>:/Resources/btnlist.png</normaloff>:/Resources/btnlist.png</iconset>
-                      </property>
-                      <property name="toolButtonStyle">
-                       <enum>Qt::ToolButtonTextBesideIcon</enum>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <widget class="QTabWidget" name="tabWidget">
-                    <property name="styleSheet">
-                     <string notr="true">QTabWidget::pane { /* The tab widget frame */
+                       </property>
+                       <property name="text">
+                        <string>选择项目</string>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="rescources.qrc">
+                         <normaloff>:/Resources/btnlist.png</normaloff>:/Resources/btnlist.png</iconset>
+                       </property>
+                       <property name="toolButtonStyle">
+                        <enum>Qt::ToolButtonTextBesideIcon</enum>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <widget class="QTabWidget" name="tabWidget">
+                     <property name="styleSheet">
+                      <string notr="true">QTabWidget::pane { /* The tab widget frame */
     border：0px;
 }
 QTabWidget::tab-bar {
@@ -551,114 +575,114 @@ QTabBar::tab:selected {
     border-bottom-color: #c62e2e; /* same as pane color */
     color:#c62e2e;
 }</string>
-                    </property>
-                    <property name="tabShape">
-                     <enum>QTabWidget::Rounded</enum>
-                    </property>
-                    <property name="currentIndex">
-                     <number>0</number>
-                    </property>
-                    <property name="elideMode">
-                     <enum>Qt::ElideNone</enum>
-                    </property>
-                    <property name="documentMode">
-                     <bool>false</bool>
-                    </property>
-                    <property name="tabsClosable">
-                     <bool>false</bool>
-                    </property>
-                    <property name="movable">
-                     <bool>false</bool>
-                    </property>
-                    <widget class="QWidget" name="tab">
-                     <attribute name="title">
-                      <string>歌曲</string>
-                     </attribute>
-                     <layout class="QVBoxLayout" name="verticalLayout_6">
-                      <property name="spacing">
-                       <number>0</number>
-                      </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QFrame" name="frame_7">
-                        <property name="styleSheet">
-                         <string notr="true">QFrame{
+                     </property>
+                     <property name="tabShape">
+                      <enum>QTabWidget::Rounded</enum>
+                     </property>
+                     <property name="currentIndex">
+                      <number>0</number>
+                     </property>
+                     <property name="elideMode">
+                      <enum>Qt::ElideNone</enum>
+                     </property>
+                     <property name="documentMode">
+                      <bool>false</bool>
+                     </property>
+                     <property name="tabsClosable">
+                      <bool>false</bool>
+                     </property>
+                     <property name="movable">
+                      <bool>false</bool>
+                     </property>
+                     <widget class="QWidget" name="tab">
+                      <attribute name="title">
+                       <string>歌曲</string>
+                      </attribute>
+                      <layout class="QVBoxLayout" name="verticalLayout_6">
+                       <property name="spacing">
+                        <number>0</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QFrame" name="frame_7">
+                         <property name="styleSheet">
+                          <string notr="true">QFrame{
     background-color:#fafafc;
 }</string>
-                        </property>
-                        <property name="frameShape">
-                         <enum>QFrame::NoFrame</enum>
-                        </property>
-                        <property name="frameShadow">
-                         <enum>QFrame::Plain</enum>
-                        </property>
-                        <layout class="QVBoxLayout" name="verticalLayout_5">
-                         <property name="spacing">
-                          <number>0</number>
                          </property>
-                         <property name="leftMargin">
-                          <number>0</number>
+                         <property name="frameShape">
+                          <enum>QFrame::NoFrame</enum>
                          </property>
-                         <property name="topMargin">
-                          <number>0</number>
+                         <property name="frameShadow">
+                          <enum>QFrame::Plain</enum>
                          </property>
-                         <property name="rightMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="bottomMargin">
-                          <number>0</number>
-                         </property>
-                         <item>
-                          <widget class="Line" name="line">
-                           <property name="frameShadow">
-                            <enum>QFrame::Sunken</enum>
-                           </property>
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <layout class="QHBoxLayout" name="horizontalLayout_9">
-                           <property name="spacing">
-                            <number>10</number>
-                           </property>
-                           <property name="leftMargin">
-                            <number>10</number>
-                           </property>
-                           <item>
-                            <widget class="QToolButton" name="toolButton_10">
-                             <property name="minimumSize">
-                              <size>
-                               <width>100</width>
-                               <height>50</height>
-                              </size>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>16777215</width>
-                               <height>16777215</height>
-                              </size>
-                             </property>
-                             <property name="layoutDirection">
-                              <enum>Qt::LeftToRight</enum>
-                             </property>
-                             <property name="autoFillBackground">
-                              <bool>false</bool>
-                             </property>
-                             <property name="styleSheet">
-                              <string notr="true">QToolButton{
+                         <layout class="QVBoxLayout" name="verticalLayout_5">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="Line" name="line">
+                            <property name="frameShadow">
+                             <enum>QFrame::Sunken</enum>
+                            </property>
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_9">
+                            <property name="spacing">
+                             <number>10</number>
+                            </property>
+                            <property name="leftMargin">
+                             <number>10</number>
+                            </property>
+                            <item>
+                             <widget class="QToolButton" name="toolButton_10">
+                              <property name="minimumSize">
+                               <size>
+                                <width>100</width>
+                                <height>50</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="layoutDirection">
+                               <enum>Qt::LeftToRight</enum>
+                              </property>
+                              <property name="autoFillBackground">
+                               <bool>false</bool>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">QToolButton{
 	background-color:#fafafc;
     border:0px;      
 	font: 10pt &quot;Microsoft YaHei UI&quot;;
@@ -666,72 +690,72 @@ QTabBar::tab:selected {
 QToolButton:pressed{ /*按下按钮后*/  
     background-color:#fafafc;   
 }</string>
-                             </property>
-                             <property name="text">
-                              <string>播放全部</string>
-                             </property>
-                             <property name="icon">
-                              <iconset resource="rescources.qrc">
-                               <normaloff>:/Resources/btnmusic2.png</normaloff>:/Resources/btnmusic2.png</iconset>
-                             </property>
-                             <property name="iconSize">
-                              <size>
-                               <width>20</width>
-                               <height>20</height>
-                              </size>
-                             </property>
-                             <property name="popupMode">
-                              <enum>QToolButton::InstantPopup</enum>
-                             </property>
-                             <property name="toolButtonStyle">
-                              <enum>Qt::ToolButtonTextBesideIcon</enum>
-                             </property>
-                             <property name="autoRaise">
-                              <bool>false</bool>
-                             </property>
-                             <property name="arrowType">
-                              <enum>Qt::NoArrow</enum>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="Line" name="line_2">
-                             <property name="minimumSize">
-                              <size>
-                               <width>0</width>
-                               <height>20</height>
-                              </size>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>16777215</width>
-                               <height>20</height>
-                              </size>
-                             </property>
-                             <property name="frameShadow">
-                              <enum>QFrame::Sunken</enum>
-                             </property>
-                             <property name="orientation">
-                              <enum>Qt::Vertical</enum>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <widget class="QToolButton" name="toolButton_9">
-                             <property name="minimumSize">
-                              <size>
-                               <width>90</width>
-                               <height>0</height>
-                              </size>
-                             </property>
-                             <property name="maximumSize">
-                              <size>
-                               <width>90</width>
-                               <height>50</height>
-                              </size>
-                             </property>
-                             <property name="styleSheet">
-                              <string notr="true">QToolButton{
+                              </property>
+                              <property name="text">
+                               <string>播放全部</string>
+                              </property>
+                              <property name="icon">
+                               <iconset resource="rescources.qrc">
+                                <normaloff>:/Resources/btnmusic2.png</normaloff>:/Resources/btnmusic2.png</iconset>
+                              </property>
+                              <property name="iconSize">
+                               <size>
+                                <width>20</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                              <property name="popupMode">
+                               <enum>QToolButton::InstantPopup</enum>
+                              </property>
+                              <property name="toolButtonStyle">
+                               <enum>Qt::ToolButtonTextBesideIcon</enum>
+                              </property>
+                              <property name="autoRaise">
+                               <bool>false</bool>
+                              </property>
+                              <property name="arrowType">
+                               <enum>Qt::NoArrow</enum>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="Line" name="line_2">
+                              <property name="minimumSize">
+                               <size>
+                                <width>0</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                              <property name="frameShadow">
+                               <enum>QFrame::Sunken</enum>
+                              </property>
+                              <property name="orientation">
+                               <enum>Qt::Vertical</enum>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QToolButton" name="toolButton_9">
+                              <property name="minimumSize">
+                               <size>
+                                <width>90</width>
+                                <height>0</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>90</width>
+                                <height>50</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">QToolButton{
 	background-color:#fafafc;
     border:0px;  
 	font: 10pt &quot;Microsoft YaHei UI&quot;;
@@ -739,44 +763,44 @@ QToolButton:pressed{ /*按下按钮后*/
 QToolButton:pressed{ /*按下按钮后*/  
     background-color:#fafafc;   
 }</string>
-                             </property>
-                             <property name="text">
-                              <string>选择</string>
-                             </property>
-                             <property name="icon">
-                              <iconset resource="rescources.qrc">
-                               <normaloff>:/Resources/listsequence.png</normaloff>:/Resources/listsequence.png</iconset>
-                             </property>
-                             <property name="iconSize">
-                              <size>
-                               <width>20</width>
-                               <height>20</height>
-                              </size>
-                             </property>
-                             <property name="toolButtonStyle">
-                              <enum>Qt::ToolButtonTextBesideIcon</enum>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <spacer name="horizontalSpacer_3">
-                             <property name="orientation">
-                              <enum>Qt::Horizontal</enum>
-                             </property>
-                             <property name="sizeHint" stdset="0">
-                              <size>
-                               <width>40</width>
-                               <height>20</height>
-                              </size>
-                             </property>
-                            </spacer>
-                           </item>
-                          </layout>
-                         </item>
-                         <item>
-                          <widget class="MusicInfoView" name="listView_2">
-                           <property name="styleSheet">
-                            <string notr="true">QScrollBar:vertical {
+                              </property>
+                              <property name="text">
+                               <string>选择</string>
+                              </property>
+                              <property name="icon">
+                               <iconset resource="rescources.qrc">
+                                <normaloff>:/Resources/listsequence.png</normaloff>:/Resources/listsequence.png</iconset>
+                              </property>
+                              <property name="iconSize">
+                               <size>
+                                <width>20</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                              <property name="toolButtonStyle">
+                               <enum>Qt::ToolButtonTextBesideIcon</enum>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_3">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <widget class="MusicInfoView" name="listView_2">
+                            <property name="styleSheet">
+                             <string notr="true">QScrollBar:vertical {
     background: #111111;
     width: 16px;
     margin: 16px 0 16px 0;
@@ -812,81 +836,106 @@ QScrollBar:up-arrow:vertical, QScrollBar:down-arrow:vertical {
     background: #5f5f5f;
 }
 </string>
-                           </property>
-                           <property name="frameShape">
-                            <enum>QFrame::NoFrame</enum>
-                           </property>
-                           <property name="frameShadow">
-                            <enum>QFrame::Plain</enum>
-                           </property>
-                           <property name="sizeAdjustPolicy">
-                            <enum>QAbstractScrollArea::AdjustIgnored</enum>
-                           </property>
-                           <property name="autoScroll">
-                            <bool>true</bool>
-                           </property>
-                           <property name="autoScrollMargin">
-                            <number>16</number>
-                           </property>
-                           <property name="editTriggers">
-                            <set>QAbstractItemView::NoEditTriggers</set>
-                           </property>
-                           <property name="showDropIndicator" stdset="0">
-                            <bool>true</bool>
-                           </property>
-                           <property name="selectionMode">
-                            <enum>QAbstractItemView::SingleSelection</enum>
-                           </property>
-                           <property name="selectionBehavior">
-                            <enum>QAbstractItemView::SelectRows</enum>
-                           </property>
-                           <property name="verticalScrollMode">
-                            <enum>QAbstractItemView::ScrollPerPixel</enum>
-                           </property>
-                           <property name="horizontalScrollMode">
-                            <enum>QAbstractItemView::ScrollPerPixel</enum>
-                           </property>
-                           <property name="resizeMode">
-                            <enum>QListView::Fixed</enum>
-                           </property>
-                           <property name="layoutMode">
-                            <enum>QListView::SinglePass</enum>
-                           </property>
-                           <property name="modelColumn">
-                            <number>0</number>
-                           </property>
-                           <property name="uniformItemSizes">
-                            <bool>true</bool>
-                           </property>
-                           <property name="batchSize">
-                            <number>10</number>
-                           </property>
-                           <property name="wordWrap">
-                            <bool>true</bool>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </widget>
-                      </item>
-                     </layout>
+                            </property>
+                            <property name="frameShape">
+                             <enum>QFrame::NoFrame</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Plain</enum>
+                            </property>
+                            <property name="sizeAdjustPolicy">
+                             <enum>QAbstractScrollArea::AdjustIgnored</enum>
+                            </property>
+                            <property name="autoScroll">
+                             <bool>true</bool>
+                            </property>
+                            <property name="autoScrollMargin">
+                             <number>16</number>
+                            </property>
+                            <property name="editTriggers">
+                             <set>QAbstractItemView::NoEditTriggers</set>
+                            </property>
+                            <property name="showDropIndicator" stdset="0">
+                             <bool>true</bool>
+                            </property>
+                            <property name="selectionMode">
+                             <enum>QAbstractItemView::SingleSelection</enum>
+                            </property>
+                            <property name="selectionBehavior">
+                             <enum>QAbstractItemView::SelectRows</enum>
+                            </property>
+                            <property name="verticalScrollMode">
+                             <enum>QAbstractItemView::ScrollPerPixel</enum>
+                            </property>
+                            <property name="horizontalScrollMode">
+                             <enum>QAbstractItemView::ScrollPerPixel</enum>
+                            </property>
+                            <property name="resizeMode">
+                             <enum>QListView::Fixed</enum>
+                            </property>
+                            <property name="layoutMode">
+                             <enum>QListView::SinglePass</enum>
+                            </property>
+                            <property name="modelColumn">
+                             <number>0</number>
+                            </property>
+                            <property name="uniformItemSizes">
+                             <bool>true</bool>
+                            </property>
+                            <property name="batchSize">
+                             <number>10</number>
+                            </property>
+                            <property name="wordWrap">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                     <widget class="QWidget" name="tab_2">
+                      <attribute name="title">
+                       <string>歌手</string>
+                      </attribute>
+                     </widget>
+                     <widget class="QWidget" name="tab_3">
+                      <attribute name="title">
+                       <string>专辑</string>
+                      </attribute>
+                     </widget>
                     </widget>
-                    <widget class="QWidget" name="tab_2">
-                     <attribute name="title">
-                      <string>歌手</string>
-                     </attribute>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="page">
+               <layout class="QVBoxLayout" name="verticalLayout_8">
+                <item>
+                 <widget class="QFrame" name="frame_10">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_6">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_2">
+                     <property name="text">
+                      <string>PAge2</string>
+                     </property>
                     </widget>
-                    <widget class="QWidget" name="tab_3">
-                     <attribute name="title">
-                      <string>专辑</string>
-                     </attribute>
-                    </widget>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="Favourite" name="page_2"/>
              </widget>
             </widget>
            </item>
@@ -1428,6 +1477,12 @@ QToolButton:pressed{ /*按下按钮后*/
    <class>MusicInfoView</class>
    <extends>QListView</extends>
    <header>musicinfoview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Favourite</class>
+   <extends>QWidget</extends>
+   <header>favourite.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
