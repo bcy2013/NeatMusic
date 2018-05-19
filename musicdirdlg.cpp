@@ -117,7 +117,7 @@ void MusicDirDlg::loadStoredDir()
         QString urls=settings.value("Urls").toString();
         QStringList strList=urls.split(';');
         for (int i = 0; i < strList.size(); ++i){
-             m_pMusicUrls.insert(strList.at(i).toLocal8Bit().constData());
+             m_pMusicUrls.insert(strList.at(i));
         }
     }
     updateListView(m_pMusicUrls);

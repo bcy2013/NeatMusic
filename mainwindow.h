@@ -9,13 +9,17 @@
 #include"musicdirdlg.h"
 #include"playmusicshow.h"
 #include"musicdbmanager.h"
-
-
+#include"playlistmodel.h"
+#include"musicplayerdecoderthread.h"
 #include<QStringList>
 #include<QMediaPlaylist>
 #include<QMediaPlayer>
 #include<QSet>
 #include<QtConcurrent>
+#include<QAudioOutput>
+QT_BEGIN_NAMESPACE
+class QAbstractItemView;
+QT_END_NAMESPACE
 class MusicInfoData;
 namespace Ui {
 class MainWindow;
@@ -40,6 +44,10 @@ public:
 private slots:
     void openMusicDirDlg();
     void seek(int second);
+    void getOneFram_FromThread(QByteArray ba);
+    void ffmpeg_play();
+    void handleAudioOutputState(QAudio::State);
+    void jump(const QModelIndex& index);
 signals:
     void dataBaseChanged();
 private:
@@ -48,7 +56,8 @@ private:
     MusicInfoView *m_MusicInfoView;
     PlayMusicShow *m_pPlayMusicShow;
     QSettings *m_pSettings;
-
+    PlaylistModel *m_pPlayListModel;
+    QAbstractItemView *m_playlistView;
     MusicDbManager *m_pDbMusicManager;
     int m_intCount;
 
@@ -59,6 +68,15 @@ private:
     int m_dPlayListPlayMode;
     bool m_bIsAddLikeList;
     QImage albumImg;
+
+    //解码部分
+    QByteArray byteBuf;//音频缓冲
+    QIODevice *streamOut;
+    QAudioOutput *audioOutput;
+
+    // QObject interface
+protected:
+    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
 };
 
 #endif // MAINWINDOW_H

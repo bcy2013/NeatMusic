@@ -77,7 +77,7 @@ bool MusicDbManager::deleteOneMusic(MusicInfoData *data)
 QList<MusicInfoData *> MusicDbManager::getAllFavourite()
 {   QList<MusicInfoData *> musciFavouriteList;
     QSqlQuery query;
-    QString queryStr=QStringLiteral("SELECT * FROM all_music_info ORDER BY title,album ASC;");
+    QString queryStr=QStringLiteral("SELECT * FROM all_music_info ;");
     query.prepare(queryStr);
     bool state=query.exec();
     if(state){
@@ -151,15 +151,15 @@ MusicInfoData *MusicDbManager::getOneMusic(const QString &titleQuery, const QStr
     return Q_NULLPTR;
 }
 
-QString MusicDbManager::getOneMusicPath(const QString &titleQuery, const QString &albumQuery)
+int MusicDbManager::getOneMusicID(const QString &titleQuery, const QString &albumQuery)
 {
     QSqlQuery query;
-    QString queryStr=QStringLiteral("SELECT path FROM all_music_info WHERE title='%1' AND album='%2' LIMIT 1;").arg(titleQuery).arg(albumQuery);
+    QString queryStr=QStringLiteral("SELECT id FROM all_music_info WHERE title='%1' AND album='%2' LIMIT 1;").arg(titleQuery).arg(albumQuery);
     query.exec(queryStr);
     if(query.first()){
-        QString path=query.value(0).toString();
-        return path;
+        int id=query.value(0).toInt();
+        return id;
     }
-    return "";
+    return -1;
 
 }

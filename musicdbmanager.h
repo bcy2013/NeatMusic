@@ -17,7 +17,7 @@ public:
     QList<MusicInfoData *> getAllFavourite();//ok
     bool isExist(MusicInfoData *data);//ok
     MusicInfoData * getOneMusic(const QString&titleQuery, const QString&albumQuery);
-    QString getOneMusicPath(const QString& titleQuery, const QString& albumQuery);
+    int getOneMusicID(const QString& titleQuery, const QString& albumQuery);
 
 signals:
 

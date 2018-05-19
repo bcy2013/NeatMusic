@@ -41,7 +41,10 @@ SOURCES += \
     bar.cpp \
     musicdbmanager.cpp \
     favourite.cpp \
-    favouritedelegrate.cpp
+    favouritedelegrate.cpp \
+    playlistmodel.cpp \
+    musicplayerdecoderthread.cpp \
+    playlistdelegrate.cpp
 HEADERS += \
         mainwindow.h \
     musicview.h \
@@ -60,7 +63,10 @@ HEADERS += \
     bar.h \
     musicdbmanager.h \
     favourite.h \
-    favouritedelegrate.h
+    favouritedelegrate.h \
+    playlistmodel.h \
+    musicplayerdecoderthread.h \
+    playlistdelegrate.h
 FORMS += \
         mainwindow.ui \
     musicdirdlg.ui \
@@ -71,9 +77,6 @@ RESOURCES += \
     fonts.qrc \
     stylesheets.qrc
 LIBS += -LE:/ffmpeg/lib/
-LIBS +=-lavcodec -lavformat -lswscale -lavutil
+LIBS +=-lavcodec -lavformat -lswscale -lavutil -lavdevice -lavfilter -lpostproc -lswresample
 INCLUDEPATH += E:/ffmpeg/include
 DEPENDPATH += E:/ffmpeg/include
-LIBS+= -L$$PWD/pinyin -lpinyin_win
-INCLUDEPATH+=$$PWD/pinyin
-DEPENDPATH+=$$PWD/pinyin

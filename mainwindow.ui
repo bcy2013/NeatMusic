@@ -914,6 +914,21 @@ QScrollBar:up-arrow:vertical, QScrollBar:down-arrow:vertical {
               </widget>
               <widget class="QWidget" name="page">
                <layout class="QVBoxLayout" name="verticalLayout_8">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QFrame" name="frame_10">
                   <property name="frameShape">
@@ -922,11 +937,55 @@ QScrollBar:up-arrow:vertical, QScrollBar:down-arrow:vertical {
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
                   </property>
-                  <layout class="QGridLayout" name="gridLayout_6">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_2">
+                  <layout class="QVBoxLayout" name="verticalLayout_9">
+                   <item>
+                    <widget class="QListView" name="listView_3">
+                     <property name="focusPolicy">
+                      <enum>Qt::NoFocus</enum>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">QListView{
+    alternate-background-color:#f9f9f9; 
+    show-decoration-selected: 1;
+	font: 11pt &quot;Microsoft YaHei UI&quot;;  
+    color:#7a7a7a;  
+}
+QListView::item:hover{
+	background-color:#f2f2f3;
+}
+QListView::item:selected{
+    color:#c62e2e; 
+    background-color:#dedee0;  
+}
+</string>
+                     </property>
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Plain</enum>
+                     </property>
+                     <property name="verticalScrollBarPolicy">
+                      <enum>Qt::ScrollBarAlwaysOff</enum>
+                     </property>
+                     <property name="horizontalScrollBarPolicy">
+                      <enum>Qt::ScrollBarAlwaysOff</enum>
+                     </property>
+                     <property name="alternatingRowColors">
+                      <bool>true</bool>
+                     </property>
+                     <property name="verticalScrollMode">
+                      <enum>QAbstractItemView::ScrollPerPixel</enum>
+                     </property>
+                     <property name="horizontalScrollMode">
+                      <enum>QAbstractItemView::ScrollPerPixel</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton">
                      <property name="text">
-                      <string>PAge2</string>
+                      <string>Play Use Ffmpeg decoder</string>
                      </property>
                     </widget>
                    </item>

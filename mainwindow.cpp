@@ -11,6 +11,7 @@
 #include"toast.h"
 #include"playmusicshow.h"
 #include"albumshow.h"
+#include"playlistdelegrate.h"
 
 
 #include<QUrl>
@@ -37,14 +38,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     m_MusicView(Q_NULLPTR),
     m_MusicInfoView(Q_NULLPTR),
-   m_dPlayListPlayMode(3),
-   m_bIsAddLikeList(false)
+    m_dPlayListPlayMode(3),
+    m_bIsAddLikeList(false)
 {
 
     initDatabase();
     ui->setupUi(this);
     setupMainWindow();
-
     setModelView();
     setupSignalsSlots();
 }
@@ -99,7 +99,6 @@ void MainWindow::setModelView()
         std::string  path=str.replace("/","//").toStdString();
         data1=analyzeMusicInfo(path.c_str(),false);
         data1->setPath(str);
-        //m_pDbMusicManager->addOneMusic(data1);
         if(!m_pDbMusicManager->isExist(data1))
             QtConcurrent::run(m_pDbMusicManager,&MusicDbManager::addOneMusic,data1);
         listMusic.append(data1);
@@ -108,6 +107,10 @@ void MainWindow::setModelView()
     musicListModel->addListMusicItem(listMusic);
     musicListModel->sort(0,Qt::AscendingOrder);
     m_MusicInfoView->setModel(musicListModel->mapToListViewDelegrate(musicListModel));
+
+   // m_playlistView->setModel(musicListModel);
+   // m_playlistView->setItemDelegate(new MusicViewDelegrate(m_playlistView));
+
     QString strMusicCount=QString("%1%2").arg(QStringLiteral("歌曲")).arg(musicPathList.count());
     ui->tabWidget->setTabText(0,strMusicCount);
 
@@ -168,6 +171,17 @@ void MainWindow::setupSignalsSlots()
     });
 
    connect(this,&MainWindow::dataBaseChanged,ui->page_2,&Favourite::updateView);
+   connect(ui->pushButton,&QPushButton::clicked,this,&MainWindow::ffmpeg_play);
+   connect(audioOutput,QOverload<QAudio::State>::of(&QAudioOutput::stateChanged),[=](QAudio::State state){
+           if(state==QAudio::IdleState)
+           {
+               //audioOutput->stop();
+               qDebug()<<"No Data!!";
+               ui->pushButton->setEnabled(true);
+           }
+   });
+
+    connect(m_playlistView, &QAbstractItemView::activated, this, &MainWindow::jump);
 }
 
 void MainWindow::setupMainWindow()
@@ -180,8 +194,25 @@ void MainWindow::setupMainWindow()
     m_pMediaPlayList=new QMediaPlaylist;
 
     m_pMediaPlayList->setPlaybackMode(QMediaPlaylist::PlaybackMode(m_dPlayListPlayMode));
-    m_pMediaPlayList->setCurrentIndex(0);
     musicPlayer->setPlaylist(m_pMediaPlayList);
+    m_pPlayListModel=new PlaylistModel(this);
+    m_pPlayListModel->setPlaylist(m_pMediaPlayList);
+
+    m_playlistView =static_cast<QListView *>(ui->listView_3);
+    m_playlistView->setModel(m_pPlayListModel);
+    m_playlistView->setItemDelegate(new PlayListDelegrate(m_playlistView));
+    m_playlistView->setCurrentIndex(m_pPlayListModel->index(m_pMediaPlayList->currentIndex(),0));
+
+    QAudioFormat fmt;
+    fmt.setSampleRate(44100);
+    fmt.setSampleSize(16);
+    fmt.setChannelCount(2);
+    fmt.setCodec("audio/pcm");
+    fmt.setByteOrder(QAudioFormat::LittleEndian);
+    fmt.setSampleType(QAudioFormat::SignedInt);
+    audioOutput = new QAudioOutput(fmt);
+    streamOut = audioOutput->start();
+    this->startTimer(20);
 }
 static bool isPlaylist(const QUrl &url) // Check for ".m3u" playlists.
 {
@@ -190,19 +221,21 @@ static bool isPlaylist(const QUrl &url) // Check for ".m3u" playlists.
     const QFileInfo fileInfo(url.toLocalFile());
     return fileInfo.exists() && !fileInfo.suffix().compare(QLatin1String("m3u"), Qt::CaseInsensitive);
 }
+#include<QListView>
 void MainWindow::initMusicPlayControl()
 {
     //init playList
-    QList<QString> list=musicPathList.toList();
-    for(int i=0;i<list.count();i++)
+    QList<MusicInfoData *> allMusicList=m_pDbMusicManager->getAllFavourite();
+   // QList<QString> list=musicPathList.toList();
+    for(int i=0;i<allMusicList.count();i++)
     {
-        QUrl url=QUrl(list.at(i));
+        QUrl url=QUrl(allMusicList.at(i)->path());
         if(isPlaylist(url))
             m_pMediaPlayList->load(url);
-        else
-             m_pMediaPlayList->addMedia(url);
+        else{
+            m_pMediaPlayList->addMedia(url);
+        }
     };
-
     ui->tBtn_PlayList->setText(QString::number(m_pMediaPlayList->mediaCount()));
     connect(ui->tBtn_Plsy,&QToolButton::clicked,[this](){
         switch (musicPlayer->state()) {
@@ -220,8 +253,8 @@ void MainWindow::initMusicPlayControl()
     connect(ui->tBtn_Next,&QToolButton::clicked,m_pMediaPlayList,&QMediaPlaylist::next);
     connect(ui->tBtn_Pre,&QToolButton::clicked,m_pMediaPlayList,&QMediaPlaylist::previous);
     connect(musicPlayer, QOverload<>::of(&QMediaObject::metaDataChanged),[=](){
-        QString str=list.at(m_pMediaPlayList->currentIndex());
-        string  path=str.replace("/","//").toStdString();
+        QString str=allMusicList.at(m_pMediaPlayList->currentIndex())->path();
+        string  path=str.toStdString();
         MusicInfoData *data=analyzeMusicInfo(path.c_str(),true);
         QString strMusicname=data->title();
         QString strMusicArtist=data->artistName();
@@ -281,9 +314,7 @@ void MainWindow::initMusicPlayControl()
     connect(ui->tBtn_Love,&QToolButton::clicked,[=](){
         Toast *addLoveList=new Toast(this);
         m_bIsAddLikeList=!m_bIsAddLikeList;
-        QString str=list.at(m_pMediaPlayList->currentIndex());
-        string  path=str.replace("/","//").toStdString();
-        MusicInfoData *data=analyzeMusicInfo(path.c_str(),false);
+        MusicInfoData *data=allMusicList.at(m_pMediaPlayList->currentIndex());
 
         if(m_bIsAddLikeList){
             addLoveList->resize(270,170);
@@ -295,7 +326,7 @@ void MainWindow::initMusicPlayControl()
             addLoveList->resize(180,50);
             addLoveList->setPicture(false);
             addLoveList->setText(QStringLiteral("以从喜欢列表中移除"));
-             ui->tBtn_Love->setIcon(QIcon(":/Resources/like_outline_32px_1170275_easyicon.net.png"));
+            ui->tBtn_Love->setIcon(QIcon(":/Resources/like_outline_32px_1170275_easyicon.net.png"));
         }
         data->setIsFavourite(m_bIsAddLikeList);
         m_pDbMusicManager->modifyOneMusic(data);
@@ -306,11 +337,13 @@ void MainWindow::initMusicPlayControl()
     connect(ui->listView_2,&MusicView::doubleClicked,[=](){
         QString currentTitle=ui->listView_2->currentIndex().data(MusicListModel::title).toString();
         QString currentAlbum=ui->listView_2->currentIndex().data(MusicListModel::album).toString();
-        QString path=m_pDbMusicManager->getOneMusicPath(currentTitle,currentAlbum);
-        int id=list.indexOf(path.replace("//","/"));
-        m_pMediaPlayList->setCurrentIndex(id);
+        int id=m_pDbMusicManager->getOneMusicID(currentTitle,currentAlbum);
+        m_pMediaPlayList->setCurrentIndex(id-1);
         musicPlayer->play();
         ui->tBtn_Plsy->setIcon(QIcon(":/Resources/ooopic_1501575085.png"));
+    });
+    connect(m_pMediaPlayList,QOverload<int>::of(&QMediaPlaylist::currentIndexChanged),[=](int currentIndex){
+       m_playlistView->setCurrentIndex(m_pPlayListModel->index(currentIndex,0));
     });
 }
 
@@ -373,7 +406,6 @@ void MainWindow::getAllMusics(const QString &path)
             }
         }
 }
-#include"pinyin/pinyinhelper.h"
 MusicInfoData *MainWindow::analyzeMusicInfo(const char *path,bool isAnalyzePicture)
 {
     MusicInfoData *data=new MusicInfoData();
@@ -447,3 +479,44 @@ void MainWindow::seek(int second)
     musicPlayer->setPosition(second*1000);
 }
 
+void MainWindow::getOneFram_FromThread(QByteArray ba)
+{
+    byteBuf.append(ba);
+}
+
+void MainWindow::ffmpeg_play()
+
+{    ui->pushButton->setEnabled(false);
+     MusicPlayerDecoderThread* m_pPlayerDecoderThread = new MusicPlayerDecoderThread;
+     connect(m_pPlayerDecoderThread, SIGNAL(get_One_Frame(QByteArray)), this, SLOT(getOneFram_FromThread(QByteArray)));
+     QUrl path = m_pMediaPlayList->media(m_pMediaPlayList->currentIndex()).canonicalUrl();
+     m_pPlayerDecoderThread->setAudioPath(path.toString());
+     connect(m_pPlayerDecoderThread, &MusicPlayerDecoderThread::finished, m_pPlayerDecoderThread, &QObject::deleteLater);
+     m_pPlayerDecoderThread->start();
+}
+
+void MainWindow::handleAudioOutputState(QAudio::State)
+{
+
+}
+
+void MainWindow::jump(const QModelIndex &index)
+{
+    m_pMediaPlayList->setCurrentIndex(index.row());
+}
+
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+    if (byteBuf.length() <= 0)
+    {
+        return;
+    }
+
+    if(audioOutput && audioOutput->state() != QAudio::StoppedState && audioOutput->state() != QAudio::SuspendedState)
+    {
+        int writeBytes = qMin(byteBuf.length(), audioOutput->bytesFree());
+        streamOut->write(byteBuf.data(), writeBytes);
+        byteBuf = byteBuf.right(byteBuf.length() - writeBytes);
+    }
+
+}
