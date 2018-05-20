@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>701</width>
+    <width>713</width>
     <height>430</height>
    </rect>
   </property>
@@ -155,7 +155,7 @@
                 <number>0</number>
                </property>
                <property name="rightMargin">
-                <number>20</number>
+                <number>30</number>
                </property>
                <property name="bottomMargin">
                 <number>0</number>
@@ -185,7 +185,7 @@
                   <string/>
                  </property>
                  <property name="pixmap">
-                  <pixmap resource="rescources.qrc">:/Resources/Cover_01.jpg</pixmap>
+                  <pixmap resource="rescources.qrc">:/Resources/tezt.jpg</pixmap>
                  </property>
                  <property name="scaledContents">
                   <bool>true</bool>

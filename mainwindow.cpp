@@ -68,16 +68,20 @@ void MainWindow::setModelView()
     data->setItemContent(QStringLiteral("发现音乐"));
     model->addItem(data);
     data=new ListViewItemDate();
-    data->setItemIcon(QPixmap(":/Resources/btnmv.png"));
-    data->setItemContent("MV");
+    data->setItemIcon(QPixmap(":/Resources/btnlist.png"));
+    data->setItemContent(QStringLiteral("播放列表"));
     model->addItem(data);
     data=new ListViewItemDate();
-    data->setItemIcon(QPixmap(":/Resources/btnmusic2.png"));
+    data->setItemIcon(QPixmap(":/Resources/btnradio2.png"));
     data->setItemContent(QStringLiteral("我喜欢的音乐"));
     model->addItem(data);
     m_MusicView->setModel(model);
     m_MusicView->setCurrentIndex(model->index(1));
     ui->topRightStackedWidget->setCurrentIndex(1);
+    connect(ui->tBtn_PlayList,&QToolButton::clicked,[=](){
+        ui->topRightStackedWidget->setCurrentIndex(2);
+        m_MusicView->setCurrentIndex(model->index(2));
+    });
     //音乐列表
     m_MusicInfoView=static_cast<MusicInfoView *>(ui->listView_2);
     m_MusicInfoView->setItemDelegate(new MusicInfoListDelegrate(m_MusicInfoView));
@@ -182,12 +186,14 @@ void MainWindow::setupSignalsSlots()
    });
 
     connect(m_playlistView, &QAbstractItemView::activated, this, &MainWindow::jump);
+
 }
 
 void MainWindow::setupMainWindow()
 {
 
     ui->tBtn_PlayShow->setCheckable(true);
+    ui->tBtn_PlayList->setEnabled(ui->topRightStackedWidget->currentIndex()==2?false:true);
     musicPlayer=new QMediaPlayer(this);
 
     musicPlayer->setAudioRole(QAudio::MusicRole);
