@@ -426,28 +426,10 @@ QToolButton:pressed{ /*按下按钮后*/
               <property name="frameShadow">
                <enum>QFrame::Plain</enum>
               </property>
-              <widget class="QWidget" name="page_3">
-               <layout class="QVBoxLayout" name="verticalLayout_7">
-                <item>
-                 <widget class="QFrame" name="frame_9">
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_5">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label">
-                     <property name="text">
-                      <string>Page 0</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
+              <widget class="SpectrumWidget" name="page_3">
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
               </widget>
               <widget class="QWidget" name="topRightStackedWidgetPage1">
                <layout class="QGridLayout" name="gridLayout_4">
@@ -989,6 +971,16 @@ QListView::item:selected{
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton_2">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="text">
+                      <string>Stop Use FFmpeg decoder</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
                 </item>
@@ -1310,6 +1302,30 @@ QToolButton:pressed{ /*按下按钮后*/
                  </item>
                  <item row="1" column="0" colspan="2">
                   <widget class="QSlider" name="music_Slider">
+                   <property name="styleSheet">
+                    <string notr="true">QSlider{
+border-color: #bcbcbc;
+}
+QSlider::groove:horizontal {                                
+     border: 1px solid #999999;                             
+     height: 1px;                                           
+     margin: 0px 0;                                         
+     left: 5px; right: 5px; 
+ }
+QSlider::handle:horizontal {                               
+     border: 0px ;                           
+     border-image:  url(:/Resources/圆形 (7).png);
+     width: 15px;                                           
+     margin: -7px -7px -7px -7px;                  
+} 
+QSlider::add-page:horizontal{
+background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 #bcbcbc, stop:0.25 #bcbcbc, stop:0.5 #bcbcbc, stop:1 #bcbcbc); 
+
+}
+QSlider::sub-page:horizontal{                               
+ background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 #439cf3, stop:0.25 #439cf3, stop:0.5 #439cf3, stop:1 #439cf3);                     
+}</string>
+                   </property>
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -1541,6 +1557,12 @@ QToolButton:pressed{ /*按下按钮后*/
    <class>Favourite</class>
    <extends>QWidget</extends>
    <header>favourite.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SpectrumWidget</class>
+   <extends>QWidget</extends>
+   <header>spectrumwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

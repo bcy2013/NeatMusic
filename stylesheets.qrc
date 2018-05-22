@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>qss/musicDirDlg.css</file>
+        <file>qss/spectum.css</file>
     </qresource>
 </RCC>

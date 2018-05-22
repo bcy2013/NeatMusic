@@ -45,7 +45,12 @@ SOURCES += \
     playlistmodel.cpp \
     musicplayerdecoderthread.cpp \
     playlistdelegrate.cpp \
-    singleinstance.cpp
+    singleinstance.cpp \
+    frequencyspectrum.cpp \
+    spectrograph.cpp \
+    spectrumanalyser.cpp \
+    utils.cpp \
+    spectrumwidget.cpp
 HEADERS += \
         mainwindow.h \
     musicview.h \
@@ -60,7 +65,6 @@ HEADERS += \
     toast.h \
     playmusicshow.h \
     filter.h \
-    albumshow.h \
     bar.h \
     musicdbmanager.h \
     favourite.h \
@@ -68,7 +72,15 @@ HEADERS += \
     playlistmodel.h \
     musicplayerdecoderthread.h \
     playlistdelegrate.h \
-    singleinstance.h
+    singleinstance.h \
+    spectrum.h \
+    frequencyspectrum.h \
+    spectrograph.h \
+    spectrum.h \
+    spectrumanalyser.h \
+    utils.h \
+    spectrumwidget.h \
+    albumshow.h
 FORMS += \
         mainwindow.ui \
     musicdirdlg.ui \
@@ -82,3 +94,8 @@ LIBS += -LE:/ffmpeg/lib/
 LIBS +=-lavcodec -lavformat -lswscale -lavutil -lavdevice -lavfilter -lpostproc -lswresample
 INCLUDEPATH += E:/ffmpeg/include
 DEPENDPATH += E:/ffmpeg/include
+
+win32: LIBS += -L$$PWD/fftReal/lib/ -lfftreal
+
+INCLUDEPATH += $$PWD/fftReal/include
+DEPENDPATH += $$PWD/fftReal/include

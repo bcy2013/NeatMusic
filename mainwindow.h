@@ -11,15 +11,18 @@
 #include"musicdbmanager.h"
 #include"playlistmodel.h"
 #include"musicplayerdecoderthread.h"
+#include"spectrumwidget.h"
+#include"spectrumanalyser.h"
 #include<QStringList>
 #include<QMediaPlaylist>
 #include<QMediaPlayer>
 #include<QSet>
 #include<QtConcurrent>
 #include<QAudioOutput>
-QT_BEGIN_NAMESPACE
+#include<QBuffer>
+#include<QAudioDeviceInfo>
+#include<QAudioFormat>
 class QAbstractItemView;
-QT_END_NAMESPACE
 class MusicInfoData;
 namespace Ui {
 class MainWindow;
@@ -40,17 +43,29 @@ public:
     void getAllMusics(const QString& path);
     MusicInfoData * analyzeMusicInfo(const char *path,bool isAnalyzePicture);
     void setWindowToFront(bool toFront);
+    void setAudioSuspend();
+    qint64 bufferLength();
+    void setPlayPosition(qint64 position, bool forceEmit = false);
+    void calculateSpectrum(qint64 position);
+
     //MusicInfoData * analyzeMusicInfo_ffmpeg(const char *path);
 
-private slots:
+public slots:
     void openMusicDirDlg();
     void seek(int second);
     void getOneFram_FromThread(QByteArray ba);
     void ffmpeg_play();
+    void ffmpeg_Stop();
+    void handleNotify();
     void handleAudioOutputState(QAudio::State);
     void jump(const QModelIndex& index);
+    void spectrumChanged(const FrequencySpectrum &spectrum);
 signals:
     void dataBaseChanged();
+    void bufferLengthChanged(qint64 duration);
+    void bufferChanged(qint64 position, qint64 length, const QByteArray &buffer);
+    void playPositionChanged(qint64 position);
+    void spectrumChanged(qint64 position, qint64 length, const FrequencySpectrum &spectrum);
 private:
     Ui::MainWindow *ui;
     MusicView *m_MusicView;
@@ -72,12 +87,27 @@ private:
 
     //解码部分
     QByteArray byteBuf;//音频缓冲
-    QIODevice *streamOut;
-    QAudioOutput *audioOutput;
+    //qint64              m_bufferPosition;
+    qint64              m_bufferLength;
+    //qint64              m_dataLength;
+    qint64              m_playPosition;
 
-    // QObject interface
-protected:
-    void timerEvent(QTimerEvent *event) Q_DECL_OVERRIDE;
+   //输出部分
+    QAudioDeviceInfo m_audioOutputDevice;
+    QAudioOutput *audioOutput;
+    QAudioFormat fmt;
+
+    //频谱部分
+    int                 m_spectrumBufferLength;
+    QByteArray          m_spectrumBuffer;
+    SpectrumAnalyser    m_spectrumAnalyser;
+    qint64              m_spectrumPosition;
+
+
+
+
+    SpectrumWidget *m_pSpectrumWidget;
+    QBuffer        m_audioOutputIODevice;
 };
 
 #endif // MAINWINDOW_H

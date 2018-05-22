@@ -33,13 +33,22 @@ extern "C"
 #include "libavdevice/avdevice.h"
 #include "libavutil/dict.h"
 }
+
+
+const qint64 BufferDurationUs       = 10 * 1000000;
+const int    NotifyIntervalMs       = 100;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_MusicView(Q_NULLPTR),
     m_MusicInfoView(Q_NULLPTR),
     m_dPlayListPlayMode(3),
-    m_bIsAddLikeList(false)
+    m_bIsAddLikeList(false),
+    m_audioOutputDevice(QAudioDeviceInfo::defaultOutputDevice()),
+    audioOutput(0),
+    m_spectrumBufferLength(0),
+    m_spectrumAnalyser()
 {
 
     initDatabase();
@@ -61,7 +70,7 @@ void MainWindow::setModelView()
     ListViewItemModel *model=new ListViewItemModel(this);
     ListViewItemDate *data=new ListViewItemDate();
     data->setItemIcon(QPixmap(":/Resources/btnSearch1.png"));
-    data->setItemContent(QStringLiteral("搜索"));
+    data->setItemContent(QStringLiteral("音乐可视化"));
     model->addItem(data);
     data=new ListViewItemDate();
     data->setItemIcon(QPixmap(":/Resources/btnmusic2.png"));
@@ -176,16 +185,17 @@ void MainWindow::setupSignalsSlots()
 
    connect(this,&MainWindow::dataBaseChanged,ui->page_2,&Favourite::updateView);
    connect(ui->pushButton,&QPushButton::clicked,this,&MainWindow::ffmpeg_play);
-   connect(audioOutput,QOverload<QAudio::State>::of(&QAudioOutput::stateChanged),[=](QAudio::State state){
-           if(state==QAudio::IdleState)
-           {
-               //audioOutput->stop();
-               qDebug()<<"No Data!!";
-               ui->pushButton->setEnabled(true);
-           }
-   });
+//   connect(audioOutput,QOverload<QAudio::State>::of(&QAudioOutput::stateChanged),[=](QAudio::State state){
+//           if(state==QAudio::IdleState)
+//           {
+//               //audioOutput->stop();
+//               qDebug()<<"No Data!!";
+//               ui->pushButton->setEnabled(true);
+//           }
+//   });
 
     connect(m_playlistView, &QAbstractItemView::activated, this, &MainWindow::jump);
+    connect(ui->pushButton_2,&QPushButton::clicked,this,&MainWindow::setAudioSuspend);
 
 }
 
@@ -209,16 +219,31 @@ void MainWindow::setupMainWindow()
     m_playlistView->setItemDelegate(new PlayListDelegrate(m_playlistView));
     m_playlistView->setCurrentIndex(m_pPlayListModel->index(m_pMediaPlayList->currentIndex(),0));
 
-    QAudioFormat fmt;
+
+
+    qRegisterMetaType<FrequencySpectrum>("FrequencySpectrum");
+    qRegisterMetaType<WindowFunction>("WindowFunction");
+    connect(&m_spectrumAnalyser, QOverload<const FrequencySpectrum&>::of(&SpectrumAnalyser::spectrumChanged),
+            this, QOverload<const FrequencySpectrum&>::of(&MainWindow::spectrumChanged));
+    m_spectrumAnalyser.setWindowFunction(WindowFunction::HannWindow);
     fmt.setSampleRate(44100);
     fmt.setSampleSize(16);
     fmt.setChannelCount(2);
     fmt.setCodec("audio/pcm");
     fmt.setByteOrder(QAudioFormat::LittleEndian);
     fmt.setSampleType(QAudioFormat::SignedInt);
-    audioOutput = new QAudioOutput(fmt);
-    streamOut = audioOutput->start();
-    this->startTimer(20);
+    audioOutput = new QAudioOutput(m_audioOutputDevice, fmt, this);
+    audioOutput->setNotifyInterval(NotifyIntervalMs);
+    m_spectrumBufferLength = SpectrumLengthSamples *
+                            (fmt.sampleSize() / 8) * fmt.channelCount();
+    m_bufferLength = audioLength(fmt, BufferDurationUs);
+    byteBuf.resize(m_bufferLength);
+    byteBuf.fill(0);
+    emit bufferLengthChanged(bufferLength());
+    emit bufferChanged(0,0,byteBuf);
+    m_pSpectrumWidget=static_cast<SpectrumWidget *>(ui->page_3);
+    connect(this, QOverload<qint64, qint64, const FrequencySpectrum&>::of(&MainWindow::spectrumChanged),
+            m_pSpectrumWidget, QOverload<qint64, qint64, const FrequencySpectrum&>::of(&SpectrumWidget::spectrumChanged));
 }
 static bool isPlaylist(const QUrl &url) // Check for ".m3u" playlists.
 {
@@ -350,6 +375,10 @@ void MainWindow::initMusicPlayControl()
     });
     connect(m_pMediaPlayList,QOverload<int>::of(&QMediaPlaylist::currentIndexChanged),[=](int currentIndex){
        m_playlistView->setCurrentIndex(m_pPlayListModel->index(currentIndex,0));
+       if(byteBuf.length()!=0)
+           byteBuf.clear();
+       ffmpeg_Stop();
+       m_bufferLength=0;
     });
 }
 
@@ -484,6 +513,53 @@ void MainWindow::setWindowToFront(bool toFront)
     }
 }
 
+void MainWindow::setAudioSuspend()
+{
+
+        if (QAudio::ActiveState == audioOutput->state() ||
+            QAudio::IdleState == audioOutput->state()) {
+            switch (QAudio::AudioOutput) {
+            case QAudio::AudioInput:
+                audioOutput->suspend();
+                break;
+            case QAudio::AudioOutput:
+                audioOutput->suspend();
+                break;
+            }
+        }
+        ui->pushButton->setEnabled(true);
+        ui->pushButton_2->setEnabled(false);
+}
+
+qint64 MainWindow::bufferLength()
+{
+    return m_bufferLength;
+}
+
+void MainWindow::setPlayPosition(qint64 position, bool forceEmit)
+{
+    const bool changed = (m_playPosition != position);
+    m_playPosition = position;
+    if (changed || forceEmit)
+        emit playPositionChanged(m_playPosition);
+}
+
+void MainWindow::calculateSpectrum(qint64 position)
+{
+    //Q_ASSERT(position + m_spectrumBufferLength <= m_bufferPosition + m_dataLength);
+    Q_ASSERT(0 == m_spectrumBufferLength % 2); // constraint of FFT algorithm
+
+    // QThread::currentThread is marked 'for internal use only', but
+    // we're only using it for debug output here, so it's probably OK :)
+
+    if (m_spectrumAnalyser.isReady()) {
+        m_spectrumBuffer = QByteArray::fromRawData(byteBuf.constData() + position,
+                                                   m_spectrumBufferLength);
+        m_spectrumPosition = position;
+        m_spectrumAnalyser.calculate(m_spectrumBuffer, fmt);
+    }
+}
+
 void MainWindow::openMusicDirDlg()
 {
     MusicDirDlg * p_MusicDirDlr=new MusicDirDlg(this);
@@ -504,18 +580,78 @@ void MainWindow::getOneFram_FromThread(QByteArray ba)
 
 void MainWindow::ffmpeg_play()
 
-{    ui->pushButton->setEnabled(false);
+{
+     ui->pushButton->setEnabled(false);
+     ui->pushButton_2->setEnabled(true);
      MusicPlayerDecoderThread* m_pPlayerDecoderThread = new MusicPlayerDecoderThread;
      connect(m_pPlayerDecoderThread, SIGNAL(get_One_Frame(QByteArray)), this, SLOT(getOneFram_FromThread(QByteArray)));
      QUrl path = m_pMediaPlayList->media(m_pMediaPlayList->currentIndex()).canonicalUrl();
      m_pPlayerDecoderThread->setAudioPath(path.toString());
+     if(!m_pPlayerDecoderThread->isRunning()&&byteBuf.length()==0)
+         m_pPlayerDecoderThread->start();
      connect(m_pPlayerDecoderThread, &MusicPlayerDecoderThread::finished, m_pPlayerDecoderThread, &QObject::deleteLater);
-     m_pPlayerDecoderThread->start();
+         if(audioOutput){
+             if( QAudio::SuspendedState ==audioOutput->state())
+             {
+                  audioOutput->resume();
+             }
+             else{
+                 m_spectrumAnalyser.cancelCalculation();
+                 spectrumChanged(0, 0, FrequencySpectrum());
+                 setPlayPosition(0, true);
+                 connect(audioOutput,&QAudioOutput::stateChanged,this,&MainWindow::handleAudioOutputState);
+                 connect(audioOutput,&QAudioOutput::notify,this,&MainWindow::handleNotify);
+                 m_audioOutputIODevice.close();
+                 m_audioOutputIODevice.setBuffer(&byteBuf);
+                 qDebug()<<m_audioOutputIODevice.bytesAvailable();
+                 m_audioOutputIODevice.open(QIODevice::ReadOnly);
+                 audioOutput->start(&m_audioOutputIODevice);
+             }
+         }
+}
+
+void MainWindow::ffmpeg_Stop()
+{
+    if (audioOutput) {
+        audioOutput->stop();
+        qApp->processEvents();
+        audioOutput->disconnect();
+    }
+    ui->pushButton->setEnabled(true);
+    ui->pushButton_2->setEnabled(false);
+}
+
+void MainWindow::handleNotify()
+{
+    const qint64 playPosition = audioLength(fmt, audioOutput->processedUSecs());
+    setPlayPosition(qMin(bufferLength(), playPosition));
+    const qint64 spectrumPosition = playPosition - m_spectrumBufferLength;
+   // if (spectrumPosition >= 0 && spectrumPosition + m_spectrumBufferLength < m_bufferPosition + m_dataLength)
+        calculateSpectrum(spectrumPosition);
 }
 
 void MainWindow::handleAudioOutputState(QAudio::State)
 {
-
+    if (QAudio::IdleState == audioOutput->state()) {
+        ffmpeg_Stop();
+    } else {
+        if (QAudio::StoppedState == audioOutput->state()) {
+            // Check error
+            QAudio::Error error = QAudio::NoError;
+            switch (QAudio::AudioOutput) {
+            case QAudio::AudioInput:
+                error = audioOutput->error();
+                break;
+            case QAudio::AudioOutput:
+                error = audioOutput->error();
+                break;
+            }
+            if (QAudio::NoError != error) {
+                //reset();
+                return;
+            }
+        }
+    }
 }
 
 void MainWindow::jump(const QModelIndex &index)
@@ -523,18 +659,7 @@ void MainWindow::jump(const QModelIndex &index)
     m_pMediaPlayList->setCurrentIndex(index.row());
 }
 
-void MainWindow::timerEvent(QTimerEvent *event)
+void MainWindow::spectrumChanged(const FrequencySpectrum &spectrum)
 {
-    if (byteBuf.length() <= 0)
-    {
-        return;
-    }
-
-    if(audioOutput && audioOutput->state() != QAudio::StoppedState && audioOutput->state() != QAudio::SuspendedState)
-    {
-        int writeBytes = qMin(byteBuf.length(), audioOutput->bytesFree());
-        streamOut->write(byteBuf.data(), writeBytes);
-        byteBuf = byteBuf.right(byteBuf.length() - writeBytes);
-    }
-
+    emit spectrumChanged(m_spectrumPosition, m_spectrumBufferLength, spectrum);
 }
