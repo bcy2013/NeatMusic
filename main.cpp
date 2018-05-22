@@ -1,6 +1,7 @@
 ﻿#include "mainwindow.h"
 #include <QApplication>
 #include<QFontDatabase>
+#include"singleinstance.h"
 int main(int argc, char *argv[])
 {
     QApplication::setDesktopSettingsAware(false);
@@ -12,8 +13,16 @@ int main(int argc, char *argv[])
     QFontDatabase::addApplicationFont (":/fonts/roboto-hinted/Roboto-Bold.ttf");
     QFontDatabase::addApplicationFont (":/fonts/roboto-hinted/Roboto-Medium.ttf");
     QFontDatabase::addApplicationFont (":/fonts/roboto-hinted/Roboto-Regular.ttf");
+    QString name=QStringLiteral("NeatMusic");
+    SingleInstance instance;
+    if(instance.hasPrevious(name))
+        return EXIT_SUCCESS;
+    instance.listen(name);
     MainWindow w;
     w.show();
+    QObject::connect(&instance,&SingleInstance::newInstance,[&](){
+       (&w)->setWindowToFront(true);
+    });
 
     return a.exec();
 }

@@ -39,6 +39,7 @@ public:
     void initDatabase();
     void getAllMusics(const QString& path);
     MusicInfoData * analyzeMusicInfo(const char *path,bool isAnalyzePicture);
+    void setWindowToFront(bool toFront);
     //MusicInfoData * analyzeMusicInfo_ffmpeg(const char *path);
 
 private slots:

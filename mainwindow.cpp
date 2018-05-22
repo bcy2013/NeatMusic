@@ -472,6 +472,18 @@ MusicInfoData *MainWindow::analyzeMusicInfo(const char *path,bool isAnalyzePictu
     return data;
 }
 
+void MainWindow::setWindowToFront(bool toFront)
+{
+    if(toFront){
+        show();
+        qApp->processEvents();
+        qApp->setActiveWindow(this);
+        qApp->processEvents();
+    }else{
+        hide();
+    }
+}
+
 void MainWindow::openMusicDirDlg()
 {
     MusicDirDlg * p_MusicDirDlr=new MusicDirDlg(this);

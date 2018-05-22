@@ -5,7 +5,7 @@
 #-------------------------------------------------
 CONFIG +=  c++11
 QT += core gui sql concurrent
-QT += multimedia
+QT += multimedia network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = NeatMusic
@@ -44,7 +44,8 @@ SOURCES += \
     favouritedelegrate.cpp \
     playlistmodel.cpp \
     musicplayerdecoderthread.cpp \
-    playlistdelegrate.cpp
+    playlistdelegrate.cpp \
+    singleinstance.cpp
 HEADERS += \
         mainwindow.h \
     musicview.h \
@@ -66,7 +67,8 @@ HEADERS += \
     favouritedelegrate.h \
     playlistmodel.h \
     musicplayerdecoderthread.h \
-    playlistdelegrate.h
+    playlistdelegrate.h \
+    singleinstance.h
 FORMS += \
         mainwindow.ui \
     musicdirdlg.ui \
