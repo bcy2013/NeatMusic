@@ -1,11 +1,10 @@
-ï»¿{
+{
   "updates": {
     "windows": {
-      "open-url": "",
-      "latest-version": "1.0",
+      "open-url": "https://dldir1.qq.com/qqfile/qq/QQ9.0.3/23756/QQ9.0.3.exe",
+      "latest-version": "1.0.0",
       "download-url": "https://dldir1.qq.com/qqfile/qq/QQ9.0.3/23756/QQ9.0.3.exe",
-<<<<<<< HEAD
-      "changelog": "æµ‹è¯•QQä¸‹è½½ï¼ï¼"
+      "changelog": "²âÊÔQQÏÂÔØ£¡£¡"
     },
     "osx": {
       "open-url": "https://github.com/nuttyartist/notes/releases/download/v1.0.0/Notes.Better.dmg",
@@ -18,9 +17,6 @@
       "latest-version": "1.0.0",
       "download-url": "https://github.com/nuttyartist/notes/releases/download/v1.0.0/notes_1.0.0_amd64-trusty.deb",
       "changelog": ""
-=======
-      "changelog": "test!!Â¡"
->>>>>>> ef9494270e2e05d8fadbdef46235f6dd01cc5ba8
     }
   }
 }
