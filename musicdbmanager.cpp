@@ -22,7 +22,7 @@ MusicDbManager::MusicDbManager(const QString &path, const bool &doWhat, QObject 
         "                              size REAL,"
         "                              path TEXT);"
                                );
-        bool i=query.exec(createDBMusic);
+        query.exec(createDBMusic);
     }
 }
 
@@ -53,7 +53,7 @@ bool MusicDbManager::addOneMusic(MusicInfoData *data)
             .arg(favourite)
             .arg(size)
             .arg(path);
-    bool ok=query.exec(queryStr);
+    query.exec(queryStr);
     if (this->parent() == Q_NULLPTR) {
         delete data;
     }

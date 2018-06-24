@@ -6,6 +6,7 @@
 class Bar : public QObject,public QGraphicsItem
 {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     explicit Bar(QObject *parent = nullptr);
 

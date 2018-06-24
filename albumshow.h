@@ -6,6 +6,7 @@
 class AlbumShow : public QObject,public QGraphicsItem
 {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     explicit AlbumShow(QObject *parent = nullptr);
 

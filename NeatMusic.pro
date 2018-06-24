@@ -96,6 +96,5 @@ INCLUDEPATH += E:/ffmpeg/include
 DEPENDPATH += E:/ffmpeg/include
 
 win32: LIBS += -L$$PWD/fftReal/lib/ -lfftreal
-
 INCLUDEPATH += $$PWD/fftReal/include
 DEPENDPATH += $$PWD/fftReal/include

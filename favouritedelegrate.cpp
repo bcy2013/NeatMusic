@@ -28,14 +28,14 @@ void FavouriteDelegrate::paint(QPainter *painter, const QStyleOptionViewItem &op
     double rowPosX = option.rect.x();
     double rowPosY = option.rect.y();
     double rowWidth = option.rect.width();
-    double rowHeight=option.rect.height();
+    //double rowHeight=option.rect.height();
     QRect rect=option.rect;
     QRect tempRect;
     const QAbstractItemModel *model = index.model();
     painter->setFont(QFont("Microsoft YaHei UI", 10));
     QFontMetrics fontMetrics(painter->fontMetrics());
     qreal strWidth;
-    int fontMetricsWidthOffSet=30;
+    //int fontMetricsWidthOffSet=30;
     if(index.column()==0){
         rect.setWidth(47);
         if(!m_bIsPlaying){
