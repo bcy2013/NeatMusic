@@ -13,6 +13,7 @@
 #include"musicplayerdecoderthread.h"
 #include"spectrumwidget.h"
 #include"spectrumanalyser.h"
+#include<QAutostart>
 #include<QStringList>
 #include<QMediaPlaylist>
 #include<QMediaPlayer>
@@ -22,6 +23,7 @@
 #include<QBuffer>
 #include<QAudioDeviceInfo>
 #include<QAudioFormat>
+#include"updatewindow.h"
 class QAbstractItemView;
 class MusicInfoData;
 namespace Ui {
@@ -47,10 +49,12 @@ public:
     qint64 bufferLength();
     void setPlayPosition(qint64 position, bool forceEmit = false);
     void calculateSpectrum(qint64 position);
-
+    void initSettingsDataBase();
+    void restoreStateSettings();
     //MusicInfoData * analyzeMusicInfo_ffmpeg(const char *path);
 
 public slots:
+    void checkForUpdateAuto();
     void openMusicDirDlg();
     void seek(int second);
     void getOneFram_FromThread(QByteArray ba);
@@ -75,7 +79,9 @@ private:
     PlaylistModel *m_pPlayListModel;
     QAbstractItemView *m_playlistView;
     MusicDbManager *m_pDbMusicManager;
+    updatewindow m_pUpdateWindow;
     int m_intCount;
+    bool m_dontShowUpdateWindow;
 
     QSet<QString> musicPathList;
     QMediaPlaylist *m_pMediaPlayList;
@@ -108,6 +114,12 @@ private:
 
     SpectrumWidget *m_pSpectrumWidget;
     QBuffer        m_audioOutputIODevice;
+
+    Autostart m_autoStart;
+    bool m_bIsAutoStart;
+    // QObject interface
+public:
+    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
 };
 
 #endif // MAINWINDOW_H

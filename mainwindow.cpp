@@ -48,14 +48,18 @@ MainWindow::MainWindow(QWidget *parent) :
     m_audioOutputDevice(QAudioDeviceInfo::defaultOutputDevice()),
     audioOutput(0),
     m_spectrumBufferLength(0),
-    m_spectrumAnalyser()
+    m_spectrumAnalyser(),
+    m_dontShowUpdateWindow(false),
+    m_bIsAutoStart(false)
 {
 
     initDatabase();
+    restoreStateSettings();
     ui->setupUi(this);
     setupMainWindow();
     setModelView();
     setupSignalsSlots();
+
 }
 
 MainWindow::~MainWindow()
@@ -196,12 +200,23 @@ void MainWindow::setupSignalsSlots()
 
     connect(m_playlistView, &QAbstractItemView::activated, this, &MainWindow::jump);
     connect(ui->pushButton_2,&QPushButton::clicked,this,&MainWindow::setAudioSuspend);
+    connect(ui->toolButton_update,&QToolButton::clicked,[this]{
+       m_pUpdateWindow.checkForUpdate(true);
+    });
+
+    connect(&m_pUpdateWindow,&updatewindow::dontShowUpdateWindowChanged,[=](bool state){
+            m_dontShowUpdateWindow=state;
+            m_pSettings->setValue("dontShowUpdateWindow", m_dontShowUpdateWindow);
+    });
 
 }
 
 void MainWindow::setupMainWindow()
+
 {
 
+    checkForUpdateAuto();
+    m_autoStart.setAutostart(m_bIsAutoStart);
     ui->tBtn_PlayShow->setCheckable(true);
     ui->tBtn_PlayList->setEnabled(ui->topRightStackedWidget->currentIndex()==2?false:true);
     musicPlayer=new QMediaPlayer(this);
@@ -386,7 +401,7 @@ void MainWindow::initDatabase()
 {
      m_pSettings=new QSettings(QSettings::IniFormat, QSettings::UserScope,QStringLiteral("PersonProject"), QStringLiteral("NeatMusic"), this);
      m_pSettings->setFallbacksEnabled(false);
-     //initSettingsDataBase();
+     initSettingsDataBase();
      bool doWhat=false;
      QFileInfo fi(m_pSettings->fileName());
      QDir dir(fi.absolutePath());
@@ -560,6 +575,31 @@ void MainWindow::calculateSpectrum(qint64 position)
     }
 }
 
+void MainWindow::initSettingsDataBase()
+{
+    if(m_pSettings->value("version", "NULL") == "NULL")
+        m_pSettings->setValue("version", qApp->applicationVersion());
+    if(m_pSettings->value("dontShowUpdateWindow", "NULL") == "NULL")
+        m_pSettings->setValue("dontShowUpdateWindow", m_dontShowUpdateWindow);
+    if(m_pSettings->value("autostart", "NULL") == "NULL")
+        m_pSettings->setValue("autostart", m_bIsAutoStart);
+}
+
+void MainWindow::restoreStateSettings()
+{
+    if(m_pSettings->value("dontShowUpdateWindow", "NULL") != "NULL")
+        m_dontShowUpdateWindow = m_pSettings->value("dontShowUpdateWindow").toBool();
+    if(m_pSettings->value("autostart", "NULL") != "NULL")
+        m_bIsAutoStart = m_pSettings->value("autostart").toBool();
+}
+
+void MainWindow::checkForUpdateAuto()
+{
+    m_pUpdateWindow.installEventFilter(this);
+    m_pUpdateWindow.setShowWindowDisable(m_dontShowUpdateWindow);
+    m_pUpdateWindow.checkForUpdate(false);
+}
+
 void MainWindow::openMusicDirDlg()
 {
     MusicDirDlg * p_MusicDirDlr=new MusicDirDlg(this);
@@ -662,4 +702,24 @@ void MainWindow::jump(const QModelIndex &index)
 void MainWindow::spectrumChanged(const FrequencySpectrum &spectrum)
 {
     emit spectrumChanged(m_spectrumPosition, m_spectrumBufferLength, spectrum);
+}
+
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    switch(event->type()){
+    case QEvent::Show:
+        if(watched == &m_pUpdateWindow){
+            QRect rect = m_pUpdateWindow.geometry();
+            QRect appRect = geometry();
+            int titleBarHeight = 28 ;
+            int x = appRect.x() + (appRect.width() - rect.width())/2.0;
+            int y = appRect.y() + titleBarHeight  + (appRect.height() - rect.height())/2.0;
+            m_pUpdateWindow.setGeometry(QRect(x, y, rect.width(), rect.height()));
+        }
+        break;
+    default:
+        break;
+    }
+    return QObject::eventFilter(watched, event);
 }

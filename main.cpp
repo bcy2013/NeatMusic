@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     // Set application information
     a.setApplicationName ("NeatMusic");
-    a.setApplicationVersion ("1.0.0");
+    a.setApplicationVersion ("0.0.1");
     // Load fonts from resources
     QFontDatabase::addApplicationFont (":/fonts/roboto-hinted/Roboto-Bold.ttf");
     QFontDatabase::addApplicationFont (":/fonts/roboto-hinted/Roboto-Medium.ttf");

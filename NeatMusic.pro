@@ -50,7 +50,8 @@ SOURCES += \
     spectrograph.cpp \
     spectrumanalyser.cpp \
     utils.cpp \
-    spectrumwidget.cpp
+    spectrumwidget.cpp \
+    updatewindow.cpp
 HEADERS += \
         mainwindow.h \
     musicview.h \
@@ -80,11 +81,13 @@ HEADERS += \
     spectrumanalyser.h \
     utils.h \
     spectrumwidget.h \
-    albumshow.h
+    albumshow.h \
+    updatewindow.h
 FORMS += \
         mainwindow.ui \
     musicdirdlg.ui \
-    favourite.ui
+    favourite.ui \
+    updatewindow.ui
 
 RESOURCES += \
     rescources.qrc \
@@ -98,3 +101,5 @@ DEPENDPATH += E:/ffmpeg/include
 win32: LIBS += -L$$PWD/fftReal/lib/ -lfftreal
 INCLUDEPATH += $$PWD/fftReal/include
 DEPENDPATH += $$PWD/fftReal/include
+include ($$PWD/QSimpleUpdater/QSimpleUpdater.pri)
+include($$PWD/qautostart/src/qautostart.pri)

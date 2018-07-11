@@ -1,0 +1,45 @@
+﻿QWidget {
+    font: 14px "Microsoft YaHei UI";
+    color: rgb(26, 26, 26);
+    background-color: rgb(255, 255, 255);
+}
+QTextBrowser {
+    font: 14px "Arimo";
+    color: rgb(117, 117, 117);
+    border: 1px solid rgb(205, 205, 205);
+    background-color: rgb(255, 255, 252);
+}
+QProgressBar {
+    height: 24px;
+    font-weight: 500;
+    border-radius: 5px;
+    border: 1px solid rgb(205, 205, 205);
+    background-color: rgb(251, 251, 251);
+}
+QProgressBar::chunk {
+    border-radius: 5px;
+    background-color: rgb(65, 154, 223);
+}
+QPushButton#pBt_update,#pBn_close{
+    color:#ffffff;
+    background-color:#bc2f2d;
+    font: 10pt "Microsoft YaHei UI";
+    border:none;
+}
+QPushButton#pBt_update,#pBn_close:hover:!pressed {
+    background-color:#c85856;
+}
+QPushButton#pBt_update,#pBn_close:pressed {
+    border-color:#c85856;
+    margin:1px 2px 1px 2px;
+    font:9pt;
+}
+#timeLabel {
+    font: 13px "Microsoft YaHei UI";
+}
+#titlelabel {
+    font: 20px 25px "Microsoft YaHei UI";
+}
+#label_4, #downloadLabel {
+    font: 14px "Microsoft YaHei UI";
+}

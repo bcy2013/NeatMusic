@@ -354,7 +354,7 @@ QToolButton:pressed{ /*按下按钮后*/
                      </widget>
                     </item>
                     <item>
-                     <widget class="QToolButton" name="toolButton_2">
+                     <widget class="QToolButton" name="toolButton_update">
                       <property name="styleSheet">
                        <string notr="true">QToolButton{
 	background-color:#f3f3f5;
