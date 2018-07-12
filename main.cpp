@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
     // Set application information
     a.setApplicationName ("NeatMusic");
     a.setApplicationVersion ("0.0.1");
+    a.setWindowIcon(QIcon(":/Resources/cloudmusic.ico"));
     // Load fonts from resources
     QFontDatabase::addApplicationFont (":/fonts/roboto-hinted/Roboto-Bold.ttf");
     QFontDatabase::addApplicationFont (":/fonts/roboto-hinted/Roboto-Medium.ttf");
