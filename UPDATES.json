@@ -1,10 +1,10 @@
 {
   "updates": {
     "windows": {
-      "open-url": "",
+      "open-url": "https://github.com/bcy2013/NeatMusic",
       "latest-version": "1.0",
-      "download-url": "https://dldir1.qq.com/qqfile/qq/QQ9.0.3/23756/QQ9.0.3.exe",
-      "changelog": "This is an example changelog for Windows. Go on..."
+      "download-url": "https://github.com/bcy2013/NeatMusic/releases/download/0.1/NeatmusicInstaller.exe",
+      "changelog": "这两个版本除了版本号不一样外，其实是一个程序。测试更新用的"
     }
   }
 }
