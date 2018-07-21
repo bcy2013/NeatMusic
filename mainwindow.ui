@@ -420,6 +420,12 @@ QToolButton:pressed{ /*按下按钮后*/
               </layout>
              </widget>
              <widget class="QStackedWidget" name="topRightStackedWidget">
+              <property name="minimumSize">
+               <size>
+                <width>761</width>
+                <height>472</height>
+               </size>
+              </property>
               <property name="frameShape">
                <enum>QFrame::NoFrame</enum>
               </property>

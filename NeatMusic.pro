@@ -93,10 +93,10 @@ RESOURCES += \
     rescources.qrc \
     fonts.qrc \
     stylesheets.qrc
-LIBS += -LE:/ffmpeg/lib/
+LIBS += -L$$PWD/ffmpeg/lib/
 LIBS +=-lavcodec -lavformat -lswscale -lavutil -lavdevice -lavfilter -lpostproc -lswresample
-INCLUDEPATH += E:/ffmpeg/include
-DEPENDPATH += E:/ffmpeg/include
+INCLUDEPATH += $$PWD/ffmpeg/include
+DEPENDPATH += $$PWD/ffmpeg/include
 
 win32: LIBS += -L$$PWD/fftReal/lib/ -lfftreal
 INCLUDEPATH += $$PWD/fftReal/include
